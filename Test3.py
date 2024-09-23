@@ -454,6 +454,10 @@ import streamlit as st
 import pandas as pd
 
 # The main app function
+import streamlit as st
+import pandas as pd
+
+# The main app function
 def main():
     st.title('Batting True Values')
 
@@ -486,16 +490,26 @@ def main():
         (player_data['Date'] >= pd.to_datetime(start_date)) & (player_data['Date'] <= pd.to_datetime(end_date))
         ]
 
-    # Show overall stats for the chosen player
-    st.subheader(f"Overall Stats for {player}")
-    st.dataframe(filtered_data[['match_id', 'year', 'runs_off_bat', 'B', 'Date']].sort_values(by='year'))
+    # Show overall stats for the chosen player (Summed Metrics for the Entire Career)
+    st.subheader(f"Overall Career Stats for {player}")
+    overall_stats = filtered_data.groupby('striker').agg({
+        'runs_off_bat': 'sum',
+        'B': 'sum',
+        'Out': 'sum',
+        'Expected Runs': 'sum',
+        'Expected Outs': 'sum'
+    }).reset_index()
+    st.dataframe(overall_stats.round(2))
 
     # Displaying year-by-year stats for the player
     st.subheader(f"Year-by-Year Stats for {player}")
+    combined_data = filtered_data.copy()
+
+    # Loop through each year and display the year-wise stats
     for year in filtered_data['year'].unique():
         year_data = filtered_data[filtered_data['year'] == year]
         st.write(f"Year: {year}")
-        st.dataframe(year_data[['match_id', 'runs_off_bat', 'B', 'Date']])
+        st.dataframe(year_data[['match_id', 'runs_off_bat', 'B', 'Date']].sort_values(by='Date'))
 
     # Option for the user to perform analysis
     if st.button('Analyse'):
@@ -526,9 +540,6 @@ def main():
             ['Player', 'Median Entry Point', 'I', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave',
              'Expected SR', 'True Ave', 'True SR', 'Team', ]]
         st.dataframe(final_results4.round(2))
-
-if __name__ == '__main__':
-    main()
 
 if __name__ == '__main__':
     main()
