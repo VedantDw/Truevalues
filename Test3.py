@@ -503,7 +503,7 @@ def main():
     overall_results = truemetrics(combined_data)
     player_data = overall_results[overall_results['Player'] == player]
 
-    st.dataframe(overall_results[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
+    st.dataframe(player_data[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
 
 
 if __name__ == '__main__':
