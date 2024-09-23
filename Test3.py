@@ -488,7 +488,7 @@ def main():
         year_data = filtered_data[filtered_data['year'] == year]
 
         # Apply `truemetrics` function directly on the yearly data
-        year_results = truemetrics(year_data)
+        year_results = analyze_data_for_year3(year_data)
 
         # Append the year data for calculating overall stats later
         all_yearly_data.append(year_results)
