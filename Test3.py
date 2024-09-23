@@ -318,7 +318,7 @@ def load_data(filename):
     data['ball2'] = pd.to_numeric(data['ball'], errors='coerce')
     data['over'] = data['ball2'] // 1 + 1
 
-    data['Date'] = pd.to_datetime(data['start_date'], format='%Y-%m-%d')
+    data['date'] = pd.to_datetime(data['start_date'], format='%Y-%m-%d')
 
     return data
 
