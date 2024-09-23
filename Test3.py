@@ -494,7 +494,7 @@ def main():
         all_yearly_data.append(year_results)
 
         st.write(f"Year: {year}")
-        st.dataframe(year_results[['striker', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
+        st.dataframe(year_results[['Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
 
     # Once year-by-year stats are handled, calculate overall stats by summing up the yearly results
     st.subheader(f"Overall Career Stats for {player}")
@@ -506,18 +506,18 @@ def main():
     overall_results = truemetrics(combined_data)
 
     # Display the overall career results
-    st.dataframe(overall_results[['striker', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
+    st.dataframe(overall_results[['Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
 
     # Option for the user to perform additional analysis
     if st.button('Analyse'):
         st.subheader('Analysis Results')
 
-        most_frequent_team = combined_data.groupby('striker')['Team'].agg(lambda x: x.mode().iat[0]).reset_index()
+        most_frequent_team = combined_data.groupby('Player')['Team'].agg(lambda x: x.mode().iat[0]).reset_index()
 
-        truevalues = combined_data.groupby(['striker'])[['Runs Scored', 'BF', 'Out', 'Expected Runs', 'Expected Outs']].sum()
+        truevalues = combined_data.groupby(['Player'])[['Runs Scored', 'BF', 'Out', 'Expected Runs', 'Expected Outs']].sum()
         final_results = truemetrics(truevalues)
 
-        final_results2 = pd.merge(final_results, most_frequent_team, on='striker', how='left')
+        final_results2 = pd.merge(final_results, most_frequent_team, on='Player', how='left')
 
         final_results3, f = calculate_entry_point_all_years(filtered_data)
         final_results3.columns = ['Player', 'Median Entry Point']
