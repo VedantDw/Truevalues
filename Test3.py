@@ -318,7 +318,7 @@ def load_data(filename):
     data['ball2'] = pd.to_numeric(data['ball'], errors='coerce')
     data['over'] = data['ball2'] // 1 + 1
 
-    data['date'] = pd.to_datetime(data['start_date'], format='%Y-%m-%d')
+    data['Date'] = pd.to_datetime(data['start_date'], format='%Y-%m-%d')
 
     return data
 
@@ -352,13 +352,13 @@ def main():
     # selected_options = st.multiselect('Choose options:', pos)
     # start_year, end_year = st.slider('Select Years Range:', min_value=min(years), max_value=max(years), value=(min(years), max(years)))
 
-    # User inputs for date range
-    start_date = st.date_input('Start date', data['Date'].min())
-    end_date = st.date_input('End date', data['Date'].max())
+    # User inputs for Date range
+    start_date = st.date_input('Start Date', data['Date'].min())
+    end_date = st.date_input('End Date', data['Date'].max())
 
-    # Filtering data based on the user's date selection
+    # Filtering data based on the user's Date selection
     if start_date > end_date:
-        st.error('Error: End date must be greater than start date.')
+        st.error('Error: End Date must be greater than start Date.')
 
     start_over, end_over = st.slider('Select Overs Range:', min_value=1, max_value=20, value=(1, 20))
     start_runs, end_runs = st.slider('Select Minimum Runs:', min_value=1, max_value=run, value=(1, run))
@@ -367,7 +367,7 @@ def main():
     print(filtered_data.columns)
     # filtered_data2 = filtered_data[(filtered_data['year'] >= start_year) & (filtered_data['year'] <= end_year)]
     filtered_data2 = filtered_data[
-        (filtered_data['date'] >= pd.to_datetime(start_date)) & (filtered_data['date'] <= pd.to_datetime(end_date))]
+        (filtered_data['Date'] >= pd.to_datetime(start_date)) & (filtered_data['Date'] <= pd.to_datetime(end_date))]
 
     if selected_leagues == 'T20I':
         batting = st.multiselect("Select Teams:", filtered_data2['batting_team'].unique())
