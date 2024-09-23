@@ -22,24 +22,27 @@ def truemetrics(truevalues):
 
 def truemetrics2(truevalues):
     ball_bins = [0, 6, 11, 16, 20]
-    ball_labels = ['1 to 6','7 to 11','12 to 16','17 to 20']
-    truevalues['phase'] = pd.cut(truevalues['Over'], bins=ball_bins, labels=ball_labels, include_lowest=True, right=True)
+    ball_labels = ['1 to 6', '7 to 11', '12 to 16', '17 to 20']
+    truevalues['phase'] = pd.cut(truevalues['Over'], bins=ball_bins, labels=ball_labels, include_lowest=True,
+                                 right=True)
     truevalues2 = truevalues.groupby(['Player', 'phase'])[['Runs Scored', 'BF', 'Out']].sum().reset_index()
     truevalues3 = truevalues.groupby(['phase'])[['Runs Scored', 'BF', 'Out']].sum().reset_index()
-    truevalues3.columns= ['phase','Mean Runs','Mean BF','Mean Outs']
-    truevalues4 = pd.merge(truevalues2, truevalues3,on=['phase'], how='left')
-    truevalues4['SR'] =  truevalues4['Runs Scored']/ truevalues4['BF'] * 100
-    truevalues4['Mean SR'] =  truevalues4['Mean Runs']/ truevalues4['Mean BF'] * 100
+    truevalues3.columns = ['phase', 'Mean Runs', 'Mean BF', 'Mean Outs']
+    truevalues4 = pd.merge(truevalues2, truevalues3, on=['phase'], how='left')
+    truevalues4['SR'] = truevalues4['Runs Scored'] / truevalues4['BF'] * 100
+    truevalues4['Mean SR'] = truevalues4['Mean Runs'] / truevalues4['Mean BF'] * 100
     return truevalues4
+
 
 def truemetrics3(truevalues):
     truevalues2 = truevalues.groupby(['Player', 'phase'])[['Runs Scored', 'BF', 'Out']].sum().reset_index()
     truevalues3 = truevalues.groupby(['phase'])[['Runs Scored', 'BF', 'Out']].sum().reset_index()
-    truevalues3.columns= ['phase','Mean Runs','Mean BF','Mean Outs']
-    truevalues4 = pd.merge(truevalues2, truevalues3,on=['phase'], how='left')
-    truevalues4['SR'] =  truevalues4['Runs Scored']/ truevalues4['BF'] * 100
-    truevalues4['Mean SR'] =  truevalues4['Mean Runs']/ truevalues4['Mean BF'] * 100
+    truevalues3.columns = ['phase', 'Mean Runs', 'Mean BF', 'Mean Outs']
+    truevalues4 = pd.merge(truevalues2, truevalues3, on=['phase'], how='left')
+    truevalues4['SR'] = truevalues4['Runs Scored'] / truevalues4['BF'] * 100
+    truevalues4['Mean SR'] = truevalues4['Mean Runs'] / truevalues4['Mean BF'] * 100
     return truevalues4
+
 
 def calculate_entry_point_all_years(data):
     # Identifying the first instance each batter faces a delivery in each match
@@ -107,7 +110,7 @@ def analyze_data_for_year3(year2, data2):
     inns2 = inns.groupby(['striker'])[['I']].sum().reset_index()
     inns2.columns = ['Player', 'I']
     inns3 = inns.copy()
-    inns['CI'] = inns.groupby(['striker'],as_index=False)[['I']].cumsum()
+    inns['CI'] = inns.groupby(['striker'], as_index=False)[['I']].cumsum()
     analysis_results = analyze_data_for_year2(combineddata)
     analysis_results.columns = ['Player', 'Median Entry Point']
 
@@ -134,7 +137,7 @@ def analyze_data_for_year3(year2, data2):
 
     temp.to_csv('asdkasda.csv')
 
-    temp2 = temp[['match_id', 'innings', 'striker', 'over','Runs', 'Balls']]
+    temp2 = temp[['match_id', 'innings', 'striker', 'over', 'Runs', 'Balls']]
     temp2 = temp2.drop_duplicates()
     temp2.round(2).to_csv(f'ballbyball{year2}.csv')
     temp2['count'] = 1
@@ -175,9 +178,9 @@ def analyze_data_for_year3(year2, data2):
     combined_df3['Outs'].fillna(0, inplace=True)
     combined_df3['Out'].fillna(0, inplace=True)
 
-    combined_df3['Over_Runs'] =combined_df3['Runs'] - combined_df3['Runs Scored']
-    combined_df3['Over_B'] =combined_df3['B'] - combined_df3['BF']
-    combined_df3['Over_Outs'] =combined_df3['Outs'] - combined_df3['Out']
+    combined_df3['Over_Runs'] = combined_df3['Runs'] - combined_df3['Runs Scored']
+    combined_df3['Over_B'] = combined_df3['B'] - combined_df3['BF']
+    combined_df3['Over_Outs'] = combined_df3['Outs'] - combined_df3['Out']
 
     combined_df3['BSR'] = combined_df3['Over_Runs'] / combined_df3['Over_B']
     combined_df3['OPB'] = combined_df3['Over_Outs'] / combined_df3['Over_B']
@@ -199,15 +202,16 @@ def analyze_data_for_year3(year2, data2):
     truevalues = truemetrics2(combined_df3)
     return final_results4.round(2)
 
+
 def analyze_data_for_year4(year2, data2):
     combineddata2 = data2[data2['innings'] < 3].copy()
     combineddata = combineddata2[combineddata2['year'] == year2].copy()
-    inns = combineddata.groupby(['striker', 'match_id','phase'])[['runs_off_bat']].sum().reset_index()
+    inns = combineddata.groupby(['striker', 'match_id', 'phase'])[['runs_off_bat']].sum().reset_index()
     inns['I'] = 1
-    inns2 = inns.groupby(['striker','phase'])[['I']].sum().reset_index()
-    inns2.columns = ['Player','phase', 'I']
+    inns2 = inns.groupby(['striker', 'phase'])[['I']].sum().reset_index()
+    inns2.columns = ['Player', 'phase', 'I']
     inns3 = inns.copy()
-    inns['CI'] = inns.groupby(['striker'],as_index=False)[['I']].cumsum()
+    inns['CI'] = inns.groupby(['striker'], as_index=False)[['I']].cumsum()
 
     # Filter out rows where a player was dismissed
     dismissed_data = combineddata[combineddata['player_dismissed'].notnull()]
@@ -219,42 +223,42 @@ def analyze_data_for_year4(year2, data2):
     combineddata2['Out'].fillna(0, inplace=True)
     combineddata = combineddata2.copy()
 
-    player_outs = dismissed_data.groupby(['player_dismissed', 'venue', 'over','phase'])[['Out']].sum().reset_index()
-    player_outs.columns = ['Player', 'Venue', 'Over','phase', 'Out']
+    player_outs = dismissed_data.groupby(['player_dismissed', 'venue', 'over', 'phase'])[['Out']].sum().reset_index()
+    player_outs.columns = ['Player', 'Venue', 'Over', 'phase', 'Out']
 
-    over_outs = dismissed_data.groupby(['venue', 'over','phase'])[['Out']].sum().reset_index()
-    over_outs.columns = ['Venue', 'Over','phase', 'Outs']
+    over_outs = dismissed_data.groupby(['venue', 'over', 'phase'])[['Out']].sum().reset_index()
+    over_outs.columns = ['Venue', 'Over', 'phase', 'Outs']
 
     # Group by player and aggregate the runs scored
-    player_runs = combineddata.groupby(['striker', 'venue', 'over','phase'])[['runs_off_bat', 'B']].sum().reset_index()
+    player_runs = combineddata.groupby(['striker', 'venue', 'over', 'phase'])[['runs_off_bat', 'B']].sum().reset_index()
     # Rename the columns for clarity
-    player_runs.columns = ['Player', 'Venue', 'Over','phase', 'Runs Scored', 'BF']
+    player_runs.columns = ['Player', 'Venue', 'Over', 'phase', 'Runs Scored', 'BF']
 
     # Display the merged DataFrame
-    over_runs = combineddata.groupby(['venue', 'over','phase'])[['runs_off_bat', 'B']].sum().reset_index()
-    over_runs.columns = ['Venue', 'Over','phase', 'Runs', 'B']
+    over_runs = combineddata.groupby(['venue', 'over', 'phase'])[['runs_off_bat', 'B']].sum().reset_index()
+    over_runs.columns = ['Venue', 'Over', 'phase', 'Runs', 'B']
     # Merge the two DataFrames on the 'Player' column
 
-    combined_df = pd.merge(player_runs, player_outs, on=['Player', 'Venue', 'Over','phase'], how='left')
+    combined_df = pd.merge(player_runs, player_outs, on=['Player', 'Venue', 'Over', 'phase'], how='left')
     # Merge the two DataFrames on the 'Player' column
-    combined_df2 = pd.merge(over_runs, over_outs, on=['Venue', 'Over','phase'], how='left')
+    combined_df2 = pd.merge(over_runs, over_outs, on=['Venue', 'Over', 'phase'], how='left')
     # Calculate BSR and OPB for each ball at each venue
     combined_df2['BSR'] = combined_df2['Runs'] / combined_df2['B']
     combined_df2['OPB'] = combined_df2['Outs'] / combined_df2['B']
 
-    combined_df3 = pd.merge(combined_df, combined_df2, on=['Venue', 'Over','phase'], how='left')
+    combined_df3 = pd.merge(combined_df, combined_df2, on=['Venue', 'Over', 'phase'], how='left')
     combined_df3['Expected Runs'] = combined_df3['BF'] * combined_df3['BSR']
     combined_df3['Expected Outs'] = combined_df3['BF'] * combined_df3['OPB']
 
-    truevalues = combined_df3.groupby(['Player','phase'])[
+    truevalues = combined_df3.groupby(['Player', 'phase'])[
         ['Runs Scored', 'BF', 'Out', 'Expected Runs', 'Expected Outs']].sum()
 
     final_results = truemetrics(truevalues)
 
-    players_years = combineddata[['striker', 'batting_team', 'year','phase']].drop_duplicates()
-    players_years.columns = ['Player', 'Team', 'Year','phase']
-    final_results2 = pd.merge(inns2, final_results, on=['Player','phase'], how='left')
-    final_results3 = pd.merge(players_years, final_results2, on=['Player','phase'], how='left')
+    players_years = combineddata[['striker', 'batting_team', 'year', 'phase']].drop_duplicates()
+    players_years.columns = ['Player', 'Team', 'Year', 'phase']
+    final_results2 = pd.merge(inns2, final_results, on=['Player', 'phase'], how='left')
+    final_results3 = pd.merge(players_years, final_results2, on=['Player', 'phase'], how='left')
     return final_results3.round(2)
 
 
@@ -286,6 +290,7 @@ def battingpositions(combineddata):
             combineddata.at[index, 'batting_position'] = position_counter[striker]
     return combineddata
 
+
 # Load the data
 @st.cache_data
 def load_data(filename):
@@ -313,7 +318,6 @@ def load_data(filename):
     data['ball2'] = pd.to_numeric(data['ball'], errors='coerce')
     data['over'] = data['ball2'] // 1 + 1
 
-
     data['Date'] = pd.to_datetime(data['start_date'], format='%Y-%m-%d')
 
     return data
@@ -327,16 +331,6 @@ def main():
     # Load and concatenate data for all selected leagues
     league_files = {
         'IPL': 'all_matches.csv',
-        'PSL': 'PSL.csv',
-        'SA20': 'SA20.csv',
-        'T20I': 'T20I.csv',
-        'T20 WCs': 't20wcs.csv',
-        'WPL': 'WPL.csv',
-        'CPL': 'CPL.csv',
-        'LPL': 'LPL.csv',
-        'MLC': 'MLC.csv',
-        'SMAT': 'SMA.csv',
-        'The 100': 'The 100.csv',
     }
 
     selected_leagues = st.selectbox('Choose leagues:', list(league_files.keys()))
@@ -353,7 +347,7 @@ def main():
 
     # Create a select box
     choice = st.selectbox('Select your option:', options)
-    choice2 = st.selectbox('Individual Player or Everyone:', ['Individual','Everyone'])
+    choice2 = st.selectbox('Individual Player or Everyone:', ['Individual', 'Everyone'])
 
     # selected_options = st.multiselect('Choose options:', pos)
     # start_year, end_year = st.slider('Select Years Range:', min_value=min(years), max_value=max(years), value=(min(years), max(years)))
@@ -367,11 +361,12 @@ def main():
         st.error('Error: End date must be greater than start date.')
 
     start_over, end_over = st.slider('Select Overs Range:', min_value=1, max_value=20, value=(1, 20))
-    start_runs,end_runs = st.slider('Select Minimum Runs:', min_value=1, max_value=run, value=(1, run))
-    start_runs1,end_runs1 = st.slider('Select Minimum BF:', min_value=1, max_value=ball, value=(1, ball))
+    start_runs, end_runs = st.slider('Select Minimum Runs:', min_value=1, max_value=run, value=(1, run))
+    start_runs1, end_runs1 = st.slider('Select Minimum BF:', min_value=1, max_value=ball, value=(1, ball))
     filtered_data = data[(data['over'] >= start_over) & (data['over'] <= end_over)]
     # filtered_data2 = filtered_data[(filtered_data['year'] >= start_year) & (filtered_data['year'] <= end_year)]
-    filtered_data2 = filtered_data[(filtered_data['date'] >= pd.to_datetime(start_date)) & (filtered_data['date'] <= pd.to_datetime(end_date))]
+    filtered_data2 = filtered_data[
+        (filtered_data['date'] >= pd.to_datetime(start_date)) & (filtered_data['date'] <= pd.to_datetime(end_date))]
 
     if selected_leagues == 'T20I':
         batting = st.multiselect("Select Teams:", filtered_data2['batting_team'].unique())
@@ -382,7 +377,7 @@ def main():
         players = data['striker'].unique()
         player = st.multiselect("Select Players:", players)
         # name = st.selectbox('Choose the Player From the list', data['striker'].unique())
-    inns = [1,2]
+    inns = [1, 2]
     inn = st.multiselect("Select innings:", inns)
     if inn:
         filtered_data2 = filtered_data2[filtered_data2['innings'].isin(inn)].copy()
@@ -404,15 +399,18 @@ def main():
             ['I', 'Runs Scored', 'BF', 'Out', 'Expected Runs', 'Expected Outs']].sum()
         final_results = truemetrics(truevalues)
 
-        final_results2 = pd.merge(final_results,most_frequent_team, on='Player', how='left')
+        final_results2 = pd.merge(final_results, most_frequent_team, on='Player', how='left')
 
         final_results3, f = calculate_entry_point_all_years(x)
         final_results3.columns = ['Player', 'Median Entry Point']
 
         final_results4 = pd.merge(final_results3, final_results2, on='Player', how='left').reset_index()
         final_results4 = final_results4.sort_values(by=['Runs Scored'], ascending=False)
-        final_results4 = final_results4[['Player', 'Median Entry Point','I', 'Runs Scored', 'BF', 'Out','Ave','SR','Expected Ave','Expected SR','True Ave','True SR','Team',]]
-        final_results4 = final_results4[(final_results4['Runs Scored'] >= start_runs) & (final_results4['Runs Scored'] <= end_runs)]
+        final_results4 = final_results4[
+            ['Player', 'Median Entry Point', 'I', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave',
+             'Expected SR', 'True Ave', 'True SR', 'Team', ]]
+        final_results4 = final_results4[
+            (final_results4['Runs Scored'] >= start_runs) & (final_results4['Runs Scored'] <= end_runs)]
         final_results4 = final_results4[(final_results4['BF'] >= start_runs1) & (final_results4['BF'] <= end_runs1)]
         if choice == 'Overall Stats':
             # Display the results
@@ -430,7 +428,8 @@ def main():
                 st.dataframe(final_results4.round(2))
 
         elif choice == 'Season By Season':
-            combined_data = combined_data[(combined_data['Runs Scored'] >= start_runs) & (combined_data['Runs Scored'] <= end_runs)]
+            combined_data = combined_data[
+                (combined_data['Runs Scored'] >= start_runs) & (combined_data['Runs Scored'] <= end_runs)]
             combined_data = combined_data[(combined_data['BF'] >= start_runs1) & (combined_data['BF'] <= end_runs1)]
             if choice2 == 'Individual':
                 temp = []
@@ -446,6 +445,7 @@ def main():
                 combined_data = combined_data.sort_values(by=['Runs Scored'], ascending=False)
                 st.dataframe(combined_data)
                 combined_data['Player2'] = combined_data['Player'] + ' , ' + combined_data['Year'].astype(str)
+
 
 # Run the main function
 if __name__ == '__main__':
