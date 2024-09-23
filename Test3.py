@@ -474,7 +474,7 @@ def main():
 
     # Filter data based on player selection and date range
     player_data = data[data['striker'] == player]
-    filtered_data = player_data[
+    filtered_data = data[
         (player_data['Date'] >= pd.to_datetime(start_date)) & (player_data['Date'] <= pd.to_datetime(end_date))
         ]
 
@@ -503,6 +503,7 @@ def main():
 
     # Apply `truemetrics` on the combined yearly data to calculate overall stats
     overall_results = truemetrics(combined_data)
+    player_data = overall_results[overall_results['Player'] == player]
 
     st.dataframe(overall_results[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
 
