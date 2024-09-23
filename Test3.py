@@ -480,30 +480,28 @@ def main():
     all_yearly_data = []
 
     # Year-by-Year Breakdown
-    st.subheader(f"Year-by-Year Stats for {player}")
-
     for year in filtered_data['year'].unique():
         year_data = filtered_data[filtered_data['year'] == year]
 
         # Apply `truemetrics` function directly on the yearly data
         year_results = analyze_data_for_year3(year,filtered_data)
+        player_data = year_results[year_results['Player'] == player]
 
         # Append the year data for calculating overall stats later
-        all_yearly_data.append(year_results)
+        all_yearly_data.append(player_data)
 
 
 
     # Once year-by-year stats are handled, calculate overall stats by summing up the yearly results
-    st.subheader(f"Overall Career Stats for {player}")
+    st.subheader(f"Year Stats for {player}")
 
     # Combine all yearly data into one DataFrame
     combined_data = pd.concat(all_yearly_data, ignore_index=True)
 
     # Apply `truemetrics` on the combined yearly data to calculate overall stats
     overall_results = truemetrics(combined_data)
-    player_data = overall_results[overall_results['Player'] == player]
 
-    st.dataframe(player_data[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
+    st.dataframe(overall_results[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
 
 
 if __name__ == '__main__':
