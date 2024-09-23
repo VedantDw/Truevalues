@@ -325,6 +325,135 @@ def load_data(filename):
 
 # The main app function
 
+# def main():
+#     st.title('Batting True Values')
+#
+#     # Load and concatenate data for all selected leagues
+#     league_files = {
+#         'IPL': 'all_matches.csv',
+#     }
+#
+#     selected_leagues = st.selectbox('Choose leagues:', list(league_files.keys()))
+#
+#     data = load_data(league_files[selected_leagues])
+#     years = data['year'].unique()
+#     dates = data['Date'].unique()
+#     data2 = data.groupby('striker')[['runs_off_bat', 'B']].sum().reset_index()
+#     run = max((data2['runs_off_bat']).astype(int))
+#     ball = max((data2['B']).astype(int))
+#
+#     # Selectors for user input
+#     options = ['Overall Stats', 'Season By Season']
+#
+#     # Create a select box
+#     choice = st.selectbox('Select your option:', options)
+#     choice2 = st.selectbox('Individual Player or Everyone:', ['Individual', 'Everyone'])
+#
+#     # selected_options = st.multiselect('Choose options:', pos)
+#     # start_year, end_year = st.slider('Select Years Range:', min_value=min(years), max_value=max(years), value=(min(years), max(years)))
+#
+#     # User inputs for Date range
+#     start_date = st.date_input('Start Date', data['Date'].min())
+#     end_date = st.date_input('End Date', data['Date'].max())
+#
+#     # Filtering data based on the user's Date selection
+#     if start_date > end_date:
+#         st.error('Error: End Date must be greater than start Date.')
+#
+#     start_over, end_over = st.slider('Select Overs Range:', min_value=1, max_value=20, value=(1, 20))
+#     start_runs, end_runs = st.slider('Select Minimum Runs:', min_value=1, max_value=run, value=(1, run))
+#     start_runs1, end_runs1 = st.slider('Select Minimum BF:', min_value=1, max_value=ball, value=(1, ball))
+#     filtered_data = data[(data['over'] >= start_over) & (data['over'] <= end_over)]
+#     print(filtered_data.columns)
+#     # filtered_data2 = filtered_data[(filtered_data['year'] >= start_year) & (filtered_data['year'] <= end_year)]
+#     filtered_data2 = filtered_data[
+#         (filtered_data['Date'] >= pd.to_datetime(start_date)) & (filtered_data['Date'] <= pd.to_datetime(end_date))]
+#
+#     if selected_leagues == 'T20I':
+#         batting = st.multiselect("Select Teams:", filtered_data2['batting_team'].unique())
+#         if batting:
+#             filtered_data2 = filtered_data2[filtered_data2['batting_team'].isin(batting)].copy()
+#             filtered_data2 = filtered_data2[filtered_data2['bowling_team'].isin(batting)].copy()
+#     if choice2 == 'Individual':
+#         players = data['striker'].unique()
+#         player = st.multiselect("Select Players:", players)
+#         # name = st.selectbox('Choose the Player From the list', data['striker'].unique())
+#     inns = [1, 2]
+#     inn = st.multiselect("Select innings:", inns)
+#     if inn:
+#         filtered_data2 = filtered_data2[filtered_data2['innings'].isin(inn)].copy()
+#     x = filtered_data2
+#     # A button to trigger the analysis
+#     if st.button('Analyse'):
+#         # Call a hypothetical function to analyze data
+#         all_data = []
+#
+#         # Analyze data and save results for each year
+#         for year in filtered_data2['year'].unique():
+#             results = analyze_data_for_year3(year, filtered_data2)
+#             all_data.append(results)
+#
+#         combined_data = pd.concat(all_data, ignore_index=True)
+#         most_frequent_team = combined_data.groupby('Player')['Team'].agg(lambda x: x.mode().iat[0]).reset_index()
+#
+#         truevalues = combined_data.groupby(['Player'])[
+#             ['I', 'Runs Scored', 'BF', 'Out', 'Expected Runs', 'Expected Outs']].sum()
+#         final_results = truemetrics(truevalues)
+#
+#         final_results2 = pd.merge(final_results, most_frequent_team, on='Player', how='left')
+#
+#         final_results3, f = calculate_entry_point_all_years(x)
+#         final_results3.columns = ['Player', 'Median Entry Point']
+#
+#         final_results4 = pd.merge(final_results3, final_results2, on='Player', how='left').reset_index()
+#         final_results4 = final_results4.sort_values(by=['Runs Scored'], ascending=False)
+#         final_results4 = final_results4[
+#             ['Player', 'Median Entry Point', 'I', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave',
+#              'Expected SR', 'True Ave', 'True SR', 'Team', ]]
+#         final_results4 = final_results4[
+#             (final_results4['Runs Scored'] >= start_runs) & (final_results4['Runs Scored'] <= end_runs)]
+#         final_results4 = final_results4[(final_results4['BF'] >= start_runs1) & (final_results4['BF'] <= end_runs1)]
+#         if choice == 'Overall Stats':
+#             # Display the results
+#             if choice2 == 'Individual':
+#                 temp = []
+#                 for i in player:
+#                     if i in final_results4['Player'].unique():
+#                         temp.append(i)
+#                     else:
+#                         st.subheader(f'{i} not in this list')
+#                 final_results4 = final_results4[final_results4['Player'].isin(temp)]
+#                 st.dataframe(final_results4.round(2))
+#             else:
+#                 final_results4 = final_results4.sort_values(by=['Runs Scored'], ascending=False)
+#                 st.dataframe(final_results4.round(2))
+#
+#         elif choice == 'Season By Season':
+#             combined_data = combined_data[
+#                 (combined_data['Runs Scored'] >= start_runs) & (combined_data['Runs Scored'] <= end_runs)]
+#             combined_data = combined_data[(combined_data['BF'] >= start_runs1) & (combined_data['BF'] <= end_runs1)]
+#             if choice2 == 'Individual':
+#                 temp = []
+#                 for i in player:
+#                     if i in combined_data['Player'].unique():
+#                         temp.append(i)
+#                     else:
+#                         st.subheader(f'{i} not in this list')
+#                 combined_data = combined_data[combined_data['Player'].isin(temp)]
+#                 combined_data = combined_data.sort_values(by=['Runs Scored'], ascending=False)
+#                 st.dataframe(combined_data)
+#             else:
+#                 combined_data = combined_data.sort_values(by=['Runs Scored'], ascending=False)
+#                 st.dataframe(combined_data)
+#                 combined_data['Player2'] = combined_data['Player'] + ' , ' + combined_data['Year'].astype(str)
+
+
+# Run the main function
+
+import streamlit as st
+import pandas as pd
+
+# The main app function
 def main():
     st.title('Batting True Values')
 
@@ -342,55 +471,41 @@ def main():
     run = max((data2['runs_off_bat']).astype(int))
     ball = max((data2['B']).astype(int))
 
-    # Selectors for user input
-    options = ['Overall Stats', 'Season By Season']
+    # Select player on the top-left
+    players = data['striker'].unique()
+    player = st.sidebar.selectbox("Select Player:", players)
 
-    # Create a select box
-    choice = st.selectbox('Select your option:', options)
-    choice2 = st.selectbox('Individual Player or Everyone:', ['Individual', 'Everyone'])
+    # After player is chosen, show date selection
+    st.sidebar.subheader("Date Selection")
+    start_date = st.sidebar.date_input('Start Date', data['Date'].min())
+    end_date = st.sidebar.date_input('End Date', data['Date'].max())
 
-    # selected_options = st.multiselect('Choose options:', pos)
-    # start_year, end_year = st.slider('Select Years Range:', min_value=min(years), max_value=max(years), value=(min(years), max(years)))
+    # Filtering data based on player selection and the date range
+    player_data = data[data['striker'] == player]
+    filtered_data = player_data[
+        (player_data['Date'] >= pd.to_datetime(start_date)) & (player_data['Date'] <= pd.to_datetime(end_date))
+        ]
 
-    # User inputs for Date range
-    start_date = st.date_input('Start Date', data['Date'].min())
-    end_date = st.date_input('End Date', data['Date'].max())
+    # Show overall stats for the chosen player
+    st.subheader(f"Overall Stats for {player}")
+    st.dataframe(filtered_data[['match_id', 'year', 'runs_off_bat', 'B', 'Date']].sort_values(by='year'))
 
-    # Filtering data based on the user's Date selection
-    if start_date > end_date:
-        st.error('Error: End Date must be greater than start Date.')
+    # Displaying year-by-year stats for the player
+    st.subheader(f"Year-by-Year Stats for {player}")
+    for year in filtered_data['year'].unique():
+        year_data = filtered_data[filtered_data['year'] == year]
+        st.write(f"Year: {year}")
+        st.dataframe(year_data[['match_id', 'runs_off_bat', 'B', 'Date']])
 
-    start_over, end_over = st.slider('Select Overs Range:', min_value=1, max_value=20, value=(1, 20))
-    start_runs, end_runs = st.slider('Select Minimum Runs:', min_value=1, max_value=run, value=(1, run))
-    start_runs1, end_runs1 = st.slider('Select Minimum BF:', min_value=1, max_value=ball, value=(1, ball))
-    filtered_data = data[(data['over'] >= start_over) & (data['over'] <= end_over)]
-    print(filtered_data.columns)
-    # filtered_data2 = filtered_data[(filtered_data['year'] >= start_year) & (filtered_data['year'] <= end_year)]
-    filtered_data2 = filtered_data[
-        (filtered_data['Date'] >= pd.to_datetime(start_date)) & (filtered_data['Date'] <= pd.to_datetime(end_date))]
-
-    if selected_leagues == 'T20I':
-        batting = st.multiselect("Select Teams:", filtered_data2['batting_team'].unique())
-        if batting:
-            filtered_data2 = filtered_data2[filtered_data2['batting_team'].isin(batting)].copy()
-            filtered_data2 = filtered_data2[filtered_data2['bowling_team'].isin(batting)].copy()
-    if choice2 == 'Individual':
-        players = data['striker'].unique()
-        player = st.multiselect("Select Players:", players)
-        # name = st.selectbox('Choose the Player From the list', data['striker'].unique())
-    inns = [1, 2]
-    inn = st.multiselect("Select innings:", inns)
-    if inn:
-        filtered_data2 = filtered_data2[filtered_data2['innings'].isin(inn)].copy()
-    x = filtered_data2
-    # A button to trigger the analysis
+    # Option for the user to perform analysis
     if st.button('Analyse'):
-        # Call a hypothetical function to analyze data
+        st.subheader('Analysis Results')
+
+        # Call the analysis function and display the results
         all_data = []
 
-        # Analyze data and save results for each year
-        for year in filtered_data2['year'].unique():
-            results = analyze_data_for_year3(year, filtered_data2)
+        for year in filtered_data['year'].unique():
+            results = analyze_data_for_year3(year, filtered_data)
             all_data.append(results)
 
         combined_data = pd.concat(all_data, ignore_index=True)
@@ -402,7 +517,7 @@ def main():
 
         final_results2 = pd.merge(final_results, most_frequent_team, on='Player', how='left')
 
-        final_results3, f = calculate_entry_point_all_years(x)
+        final_results3, f = calculate_entry_point_all_years(filtered_data)
         final_results3.columns = ['Player', 'Median Entry Point']
 
         final_results4 = pd.merge(final_results3, final_results2, on='Player', how='left').reset_index()
@@ -410,44 +525,10 @@ def main():
         final_results4 = final_results4[
             ['Player', 'Median Entry Point', 'I', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave',
              'Expected SR', 'True Ave', 'True SR', 'Team', ]]
-        final_results4 = final_results4[
-            (final_results4['Runs Scored'] >= start_runs) & (final_results4['Runs Scored'] <= end_runs)]
-        final_results4 = final_results4[(final_results4['BF'] >= start_runs1) & (final_results4['BF'] <= end_runs1)]
-        if choice == 'Overall Stats':
-            # Display the results
-            if choice2 == 'Individual':
-                temp = []
-                for i in player:
-                    if i in final_results4['Player'].unique():
-                        temp.append(i)
-                    else:
-                        st.subheader(f'{i} not in this list')
-                final_results4 = final_results4[final_results4['Player'].isin(temp)]
-                st.dataframe(final_results4.round(2))
-            else:
-                final_results4 = final_results4.sort_values(by=['Runs Scored'], ascending=False)
-                st.dataframe(final_results4.round(2))
+        st.dataframe(final_results4.round(2))
 
-        elif choice == 'Season By Season':
-            combined_data = combined_data[
-                (combined_data['Runs Scored'] >= start_runs) & (combined_data['Runs Scored'] <= end_runs)]
-            combined_data = combined_data[(combined_data['BF'] >= start_runs1) & (combined_data['BF'] <= end_runs1)]
-            if choice2 == 'Individual':
-                temp = []
-                for i in player:
-                    if i in combined_data['Player'].unique():
-                        temp.append(i)
-                    else:
-                        st.subheader(f'{i} not in this list')
-                combined_data = combined_data[combined_data['Player'].isin(temp)]
-                combined_data = combined_data.sort_values(by=['Runs Scored'], ascending=False)
-                st.dataframe(combined_data)
-            else:
-                combined_data = combined_data.sort_values(by=['Runs Scored'], ascending=False)
-                st.dataframe(combined_data)
-                combined_data['Player2'] = combined_data['Player'] + ' , ' + combined_data['Year'].astype(str)
+if __name__ == '__main__':
+    main()
 
-
-# Run the main function
 if __name__ == '__main__':
     main()
