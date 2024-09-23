@@ -493,8 +493,7 @@ def main():
         # Append the year data for calculating overall stats later
         all_yearly_data.append(year_results)
 
-        st.write(f"Year: {year}")
-        st.dataframe(year_results[['Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
+
 
     # Once year-by-year stats are handled, calculate overall stats by summing up the yearly results
     st.subheader(f"Overall Career Stats for {player}")
@@ -505,29 +504,8 @@ def main():
     # Apply `truemetrics` on the combined yearly data to calculate overall stats
     overall_results = truemetrics(combined_data)
 
-    # Display the overall career results
-    st.dataframe(overall_results[['Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
+    st.dataframe(overall_results[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
 
-    # Option for the user to perform additional analysis
-    if st.button('Analyse'):
-        st.subheader('Analysis Results')
-
-        most_frequent_team = combined_data.groupby('Player')['Team'].agg(lambda x: x.mode().iat[0]).reset_index()
-
-        truevalues = combined_data.groupby(['Player'])[['Runs Scored', 'BF', 'Out', 'Expected Runs', 'Expected Outs']].sum()
-        final_results = truemetrics(truevalues)
-
-        final_results2 = pd.merge(final_results, most_frequent_team, on='Player', how='left')
-
-        final_results3, f = calculate_entry_point_all_years(filtered_data)
-        final_results3.columns = ['Player', 'Median Entry Point']
-
-        final_results4 = pd.merge(final_results3, final_results2, on='Player', how='left').reset_index()
-        final_results4 = final_results4.sort_values(by=['Runs Scored'], ascending=False)
-        final_results4 = final_results4[
-            ['Player', 'Median Entry Point', 'I', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave',
-             'Expected SR', 'True Ave', 'True SR', 'Team']]
-        st.dataframe(final_results4.round(2))
 
 if __name__ == '__main__':
     main()
