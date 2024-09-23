@@ -458,6 +458,14 @@ import streamlit as st
 import pandas as pd
 
 # The main app function
+import streamlit as st
+import pandas as pd
+
+# The main app function
+import streamlit as st
+import pandas as pd
+
+# The main app function
 def main():
     st.title('Batting True Values')
 
@@ -471,9 +479,6 @@ def main():
     data = load_data(league_files[selected_leagues])
     years = data['year'].unique()
     dates = data['Date'].unique()
-    data2 = data.groupby('striker')[['runs_off_bat', 'B']].sum().reset_index()
-    run = max((data2['runs_off_bat']).astype(int))
-    ball = max((data2['B']).astype(int))
 
     # Select player on the top-left
     players = data['striker'].unique()
@@ -484,52 +489,53 @@ def main():
     start_date = st.sidebar.date_input('Start Date', data['Date'].min())
     end_date = st.sidebar.date_input('End Date', data['Date'].max())
 
-    # Filtering data based on player selection and the date range
+    # Filter data based on player selection and date range
     player_data = data[data['striker'] == player]
     filtered_data = player_data[
         (player_data['Date'] >= pd.to_datetime(start_date)) & (player_data['Date'] <= pd.to_datetime(end_date))
         ]
 
-    # Show overall stats for the chosen player (Summed Metrics for the Entire Career)
+    # Overall Career Stats
     st.subheader(f"Overall Career Stats for {player}")
-    overall_stats = filtered_data.groupby('striker').agg({
-        'runs_off_bat': 'sum',
-        'B': 'sum',
-        'Out': 'sum',
-        'Expected Runs': 'sum',
-        'Expected Outs': 'sum'
-    }).reset_index()
-    st.dataframe(overall_stats.round(2))
 
-    # Displaying year-by-year stats for the player
+    # Apply `truemetrics` directly on the filtered data (no prior calculations)
+    final_results = truemetrics(filtered_data)
+
+    # Display the overall results
+    st.dataframe(final_results[['striker', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
+
+    # Year-by-Year Breakdown
     st.subheader(f"Year-by-Year Stats for {player}")
-    combined_data = filtered_data.copy()
 
-    # Loop through each year and display the year-wise stats
+    # Loop through each year and calculate the true metrics for each year
+    all_data = []
     for year in filtered_data['year'].unique():
         year_data = filtered_data[filtered_data['year'] == year]
-        st.write(f"Year: {year}")
-        st.dataframe(year_data[['match_id', 'runs_off_bat', 'B', 'Date']].sort_values(by='Date'))
 
-    # Option for the user to perform analysis
+        # Apply `truemetrics` function directly on the yearly data
+        year_results = truemetrics(year_data)
+
+        # Append each year's results for later use or further analysis
+        all_data.append(year_results.assign(Year=year))
+
+        st.write(f"Year: {year}")
+        st.dataframe(year_results[['striker', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
+
+    # Combine all year-by-year data if needed for further analysis
+    combined_yearly_data = pd.concat(all_data, ignore_index=True)
+
+    # Option for the user to perform additional analysis
     if st.button('Analyse'):
         st.subheader('Analysis Results')
 
-        # Call the analysis function and display the results
-        all_data = []
-
-        for year in filtered_data['year'].unique():
-            results = analyze_data_for_year3(year, filtered_data)
-            all_data.append(results)
-
         combined_data = pd.concat(all_data, ignore_index=True)
-        most_frequent_team = combined_data.groupby('Player')['Team'].agg(lambda x: x.mode().iat[0]).reset_index()
 
-        truevalues = combined_data.groupby(['Player'])[
-            ['I', 'Runs Scored', 'BF', 'Out', 'Expected Runs', 'Expected Outs']].sum()
+        most_frequent_team = combined_data.groupby('striker')['Team'].agg(lambda x: x.mode().iat[0]).reset_index()
+
+        truevalues = combined_data.groupby(['striker'])[['Runs Scored', 'BF', 'Out', 'Expected Runs', 'Expected Outs']].sum()
         final_results = truemetrics(truevalues)
 
-        final_results2 = pd.merge(final_results, most_frequent_team, on='Player', how='left')
+        final_results2 = pd.merge(final_results, most_frequent_team, on='striker', how='left')
 
         final_results3, f = calculate_entry_point_all_years(filtered_data)
         final_results3.columns = ['Player', 'Median Entry Point']
@@ -538,7 +544,7 @@ def main():
         final_results4 = final_results4.sort_values(by=['Runs Scored'], ascending=False)
         final_results4 = final_results4[
             ['Player', 'Median Entry Point', 'I', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave',
-             'Expected SR', 'True Ave', 'True SR', 'Team', ]]
+             'Expected SR', 'True Ave', 'True SR', 'Team']]
         st.dataframe(final_results4.round(2))
 
 if __name__ == '__main__':
