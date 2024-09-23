@@ -364,6 +364,7 @@ def main():
     start_runs, end_runs = st.slider('Select Minimum Runs:', min_value=1, max_value=run, value=(1, run))
     start_runs1, end_runs1 = st.slider('Select Minimum BF:', min_value=1, max_value=ball, value=(1, ball))
     filtered_data = data[(data['over'] >= start_over) & (data['over'] <= end_over)]
+    print(filtered_data.columns)
     # filtered_data2 = filtered_data[(filtered_data['year'] >= start_year) & (filtered_data['year'] <= end_year)]
     filtered_data2 = filtered_data[
         (filtered_data['date'] >= pd.to_datetime(start_date)) & (filtered_data['date'] <= pd.to_datetime(end_date))]
