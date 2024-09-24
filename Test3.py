@@ -472,7 +472,8 @@ def main():
     # Filter data based on player selection and date range
     player_data = data[data['striker'] == player]
     filtered_data = data[(data['Date'] >= pd.to_datetime(start_date)) & (data['Date'] <= pd.to_datetime(end_date))]
-
+    start_over, end_over = st.sidebar.slider('Select Overs Range:', min_value=1, max_value=20, value=(1, 20))
+    filtered_data = filtered_data[(filtered_data['over'] >= start_over) & (filtered_data['over'] <= end_over)]
     # Initialize a list to store year-by-year data
     all_yearly_data = []
 
