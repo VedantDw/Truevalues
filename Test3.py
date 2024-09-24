@@ -5,7 +5,7 @@ import glob
 import streamlit as st
 import plotly.express as px
 from matplotlib import pyplot as plt
-from pygments.lexers import go
+import plotly.graph_objects as go  # Ensure this is the correct import
 
 
 def truemetrics(truevalues):
