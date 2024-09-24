@@ -496,24 +496,32 @@ def main():
 
     # Apply `truemetrics` on the combined yearly data to calculate overall stats
     overall_results = truemetrics(combined_data)
+    overall_results = overall_results.applymap(lambda x: '{:.2f}'.format(x) if isinstance(x, (float, int)) else x)
+
     filtered_data = filtered_data[filtered_data['striker'] == player]
     dismissed_data = filtered_data[filtered_data['player_dismissed'].notnull()]
     dismissed_data = dismissed_data[dismissed_data['wicket_type'] != 'retired hurt']
     dismissed_data['Out'] = 1
     dismissed_data = dismissed_data.groupby(['striker','wicket_type'])[['Out']].sum().reset_index()
 
-    st.dataframe(overall_results[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
+    st.dataframe(overall_results[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']])
 
-    # Create an interactive pie chart using Plotly
-    fig = px.pie(dismissed_data, names='wicket_type', values='Out',
-                 title=f'Dismissal Types for {player}',
-                 hole=0.3,  # Optional: creates a donut chart
+    # Filter data for the selected player
+    player_data = dismissed_data
+
+    # Convert 'Out' to percentage of the total dismissals for the player
+    total_outs = player_data['Out'].sum()
+    player_data['Out_Percentage'] = (player_data['Out'] / total_outs * 100).map('{:.2f}'.format)
+
+    # Create a bar chart using Plotly
+    fig = px.bar(player_data, x='wicket_type', y='Out', text='Out_Percentage',
+                 title=f'Dismissal Types for {player} (in %)',
                  labels={'wicket_type': 'Wicket Type', 'Out': 'Number of Dismissals'})
 
-    # Update pie chart to show percentages
-    fig.update_traces(textinfo='percent+label', hoverinfo='label+percent')
+    # Update hover text to show percentages with 2 decimal places
+    fig.update_traces(hovertemplate='%{x}: %{text}%<extra></extra>', textposition='auto')
 
-    # Display the chart in Streamlit
+    # Display the bar chart in Streamlit
     st.plotly_chart(fig)
 
 if __name__ == '__main__':
