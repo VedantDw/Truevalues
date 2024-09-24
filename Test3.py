@@ -1,7 +1,10 @@
+from math import pi
+
 import pandas as pd
 import glob
 import streamlit as st
 import plotly.express as px
+from matplotlib import pyplot as plt
 
 
 def truemetrics(truevalues):
@@ -493,9 +496,48 @@ def main():
 
     # Apply `truemetrics` on the combined yearly data to calculate overall stats
     overall_results = truemetrics(combined_data)
+    filtered_data = filtered_data[filtered_data['striker'] == player]
+    dismissed_data = filtered_data[filtered_data['player_dismissed'].notnull()]
+    dismissed_data = dismissed_data[dismissed_data['wicket_type'] != 'retired hurt']
+    dismissed_data['Out'] = 1
+    dismissed_data = dismissed_data.groupby(['striker','wicket_type'])[['Out']].sum().reset_index()
 
     st.dataframe(overall_results[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
 
+    player_data = dismissed_data[dismissed_data['striker'] == player]
+
+    # Categories (Wicket Types)
+    categories = player_data['wicket_type'].tolist()
+    num_categories = len(categories)
+
+    # Values for 'Out' corresponding to each wicket type
+    values = player_data['Out'].tolist()
+    values += values[:1]  # Close the loop for the radar chart
+
+    # Radar chart angles
+    angles = [n / float(num_categories) * 2 * pi for n in range(num_categories)]
+    angles += angles[:1]  # Close the loop for angles
+
+    # Radar chart setup
+    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
+
+    # Draw the outline of the radar chart
+    ax.set_theta_offset(pi / 2)
+    ax.set_theta_direction(-1)
+
+    # Draw one axis per category and add labels
+    plt.xticks(angles[:-1], categories)
+
+    # Draw the 'Out' value for each category
+    ax.plot(angles, values, linewidth=2, linestyle='solid', label=player)
+    ax.fill(angles, values, 'b', alpha=0.1)
+
+    # Title and legend
+    plt.title(f'Wicket Dismissals for {player}', size=15, color='#ffffff', y=1.1)
+    ax.legend(loc='upper right')
+
+    # Display in Streamlit
+    st.pyplot(fig)
 
 if __name__ == '__main__':
     main()
