@@ -512,8 +512,11 @@ def main():
     # Step 4: Select required columns and ensure `Year` is properly formatted as an integer
     overall_results = overall_results[['Year', 'Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'True Ave', 'True SR']]
 
-    # Display the overall results without showing the index
-    st.dataframe(overall_results.round(2), index=False)
+    overall_results = overall_results.reset_index(drop=True)
+
+    # Display the overall results without the index
+    st.dataframe(overall_results.round(2))
+
 
 
     player_data = dismissed_data
