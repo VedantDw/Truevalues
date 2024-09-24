@@ -204,7 +204,7 @@ def analyze_data_for_year3(year2, data2):
     final_results4 = pd.merge(final_results3, analysis_results, on='Player', how='left')
     print(combined_df3.columns)
     truevalues = truemetrics2(combined_df3)
-    return final_results4.round(2)
+    return final_results4
 
 
 def analyze_data_for_year4(year2, data2):
@@ -504,6 +504,7 @@ def main():
     dismissed_data = dismissed_data[dismissed_data['wicket_type'] != 'retired hurt']
     dismissed_data['Out'] = 1
     dismissed_data = dismissed_data.groupby(['striker','wicket_type'])[['Out']].sum().reset_index()
+
     overall_results['Year'] = overall_results['Year'].astype(int)
 
     # Step 3: Format all numeric columns to 2 decimal places
