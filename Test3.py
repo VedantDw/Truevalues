@@ -527,6 +527,7 @@ def main():
             cell_values.append(overall_results[col].apply(lambda x: f'{x:.2f}').tolist())
         else:
             cell_values.append(overall_results[col].tolist())
+    overall_results['Year'] = overall_results['Year'].round(0)
     header_values = list(overall_results.columns)
     # Force 2 decimal places only on numeric columns
     fig = go.Figure(data=[go.Table(
