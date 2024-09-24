@@ -450,16 +450,13 @@ def load_data(filename):
 
 # The main app function
 def main():
+    st.set_page_config(layout="wide")
+
+
     st.title('Batting True Values')
 
-    # Load and concatenate data for all selected leagues
-    league_files = {
-        'IPL': 'all_matches.csv',
-    }
 
-    selected_leagues = st.selectbox('Choose leagues:', list(league_files.keys()))
-
-    data = load_data(league_files[selected_leagues])
+    data = load_data('all_matches.csv')
     years = data['year'].unique()
     dates = data['Date'].unique()
 
