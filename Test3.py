@@ -508,6 +508,7 @@ def main():
     # Step 3: Format all numeric columns to 2 decimal places
     overall_results = overall_results.applymap(lambda x: '{:.2f}'.format(x) if isinstance(x, (float, int)) else x)
     overall_results['Year'] = pd.to_numeric(overall_results['Year'], errors='coerce').fillna(0).astype(int)
+    overall_results['Year'] = overall_results['Year'].astype(str)
 
     # Step 4: Select required columns and ensure `Year` is properly formatted as an integer
     overall_results = overall_results[['Year', 'Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'True Ave', 'True SR']]
