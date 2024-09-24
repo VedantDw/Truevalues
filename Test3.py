@@ -505,7 +505,7 @@ def main():
     st.dataframe(overall_results[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
 
     # Create an interactive pie chart using Plotly
-    fig = px.pie(player_data, names='wicket_type', values='Out',
+    fig = px.pie(dismissed_data, names='wicket_type', values='Out',
                  title=f'Dismissal Types for {player}',
                  hole=0.3,  # Optional: creates a donut chart
                  labels={'wicket_type': 'Wicket Type', 'Out': 'Number of Dismissals'})
