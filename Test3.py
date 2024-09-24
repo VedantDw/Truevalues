@@ -452,10 +452,6 @@ def load_data(filename):
 def main():
     st.set_page_config(layout="wide")
 
-
-    st.title('Batting True Values')
-
-
     data = load_data('all_matches.csv')
     years = data['year'].unique()
     dates = data['Date'].unique()
