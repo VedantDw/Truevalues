@@ -504,8 +504,50 @@ def main():
     dismissed_data['Out'] = 1
     dismissed_data = dismissed_data.groupby(['striker','wicket_type'])[['Out']].sum().reset_index()
 
-    st.dataframe(overall_results[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']])
+    overall_results = (overall_results[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'True Ave', 'True SR']])
+    # Custom HTML and CSS for hover text
+    st.markdown("""
+        <style>
+        th[data-tooltip] {
+            position: relative;
+        }
+        th[data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: -25px;
+            left: 0;
+            background-color: #333;
+            color: #fff;
+            padding: 5px;
+            font-size: 12px;
+            border-radius: 5px;
+            white-space: nowrap;
+            z-index: 1000;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
+    # Display DataFrame with hover text for columns
+    st.markdown("""
+    <table>
+      <thead>
+        <tr>
+          <th data-tooltip="Year of the match">Year</th>
+          <th data-tooltip="Name of the Player">Player</th>
+          <th data-tooltip="Total Runs Scored">Runs Scored</th>
+          <th data-tooltip="Balls Faced">BF</th>
+          <th data-tooltip="Times Player was Out">Out</th>
+          <th data-tooltip="Batting Average: Runs per Dismissal">Ave</th>
+          <th data-tooltip="Strike Rate: Runs per 100 balls faced">SR</th>
+          <th data-tooltip="True Avg is the difference in average between the batter's average and the expected average of a batter who has the same over distribution as them">True Ave</th>
+          <th data-tooltip="True Strike Rate is the difference between the batter's SR and the expected SR of a batter who has the same over distribution as them">True SR</th>
+        </tr>
+      </thead>
+    </table>
+    """, unsafe_allow_html=True)
+
+    # Display the original dataframe below (as a real table)
+    st.dataframe(overall_results)
     # Filter data for the selected player
     player_data = dismissed_data
 
