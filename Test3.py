@@ -5,6 +5,7 @@ import glob
 import streamlit as st
 import plotly.express as px
 from matplotlib import pyplot as plt
+from pygments.lexers import go
 
 
 def truemetrics(truevalues):
@@ -506,48 +507,47 @@ def main():
 
     overall_results = (overall_results[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'True Ave', 'True SR']])
     # Custom HTML and CSS for hover text
-    st.markdown("""
-        <style>
-        th[data-tooltip] {
-            position: relative;
-        }
-        th[data-tooltip]:hover::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            top: -25px;
-            left: 0;
-            background-color: #333;
-            color: #fff;
-            padding: 5px;
-            font-size: 12px;
-            border-radius: 5px;
-            white-space: nowrap;
-            z-index: 1000;
-        }
-        </style>
-    """, unsafe_allow_html=True)
+    # Define column tooltips
+    tooltips = {
+        'Year': 'Year of the match',
+        'Player': 'Name of the Player',
+        'Runs Scored': 'Total Runs Scored',
+        'BF': 'Balls Faced',
+        'Out': 'Times Player was Out',
+        'Ave': 'Batting Average: Runs per dismissal',
+        'SR': 'Strike Rate: Runs per 100 balls faced',
+        'True Ave': "True Average: True Avg is the difference in average between the batter's average and the expected average of a batter who has the same over distribution as them.",
+        'True SR': "True Strike Rate: True SR is the difference between the batter's SR and the expected SR of a batter who has the same over distribution as them"
+    }
 
-    # Display DataFrame with hover text for columns
-    st.markdown("""
-    <table>
-      <thead>
-        <tr>
-          <th data-tooltip="Year of the match">Year</th>
-          <th data-tooltip="Name of the Player">Player</th>
-          <th data-tooltip="Total Runs Scored">Runs Scored</th>
-          <th data-tooltip="Balls Faced">BF</th>
-          <th data-tooltip="Times Player was Out">Out</th>
-          <th data-tooltip="Batting Average: Runs per Dismissal">Ave</th>
-          <th data-tooltip="Strike Rate: Runs per 100 balls faced">SR</th>
-          <th data-tooltip="True Avg is the difference in average between the batter's average and the expected average of a batter who has the same over distribution as them">True Ave</th>
-          <th data-tooltip="True Strike Rate is the difference between the batter's SR and the expected SR of a batter who has the same over distribution as them">True SR</th>
-        </tr>
-      </thead>
-    </table>
-    """, unsafe_allow_html=True)
+    # Create a Plotly Table with hover tooltips
+    header_values = list(overall_results.columns)
+    cell_values = [overall_results[col].apply(lambda x: f'{x:.2f}').tolist() for col in overall_results.columns]  # Force 2 decimal places
 
-    # Display the original dataframe below (as a real table)
-    st.dataframe(overall_results)
+    fig = go.Figure(data=[go.Table(
+        header=dict(
+            values=[f'<b>{col}</b>' for col in header_values],  # Column names
+            align='center',
+            fill_color='lightskyblue',
+            font=dict(color='black', size=12),
+            line_color='darkslategray'
+        ),
+        cells=dict(
+            values=cell_values,
+            align='center',
+            fill_color='lightcyan',
+            font=dict(color='black', size=11),
+            line_color='darkslategray',
+            hoverinfo="header+text",  # Add hover for the data cells
+        )
+    )])
+
+    # Add tooltips to the header of the table using hovertext
+    for i, col in enumerate(header_values):
+        fig.data[0].header.hovertext = [tooltips[col] for col in header_values]
+
+    # Display the interactive Plotly table in Streamlit
+    st.plotly_chart(fig)
     # Filter data for the selected player
     player_data = dismissed_data
 
