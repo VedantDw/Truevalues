@@ -528,11 +528,15 @@ def main():
         else:
             cell_values.append(overall_results[col].tolist())
     overall_results['Year'] = overall_results['Year'].round(0)
-    header_values = list(overall_results.columns)
+    header_values = [
+        f'<span title="{tooltips[col]}">{col}</span>' for col in overall_results.columns
+    ]    # Force 2 decimal places only on numeric columns
     # Force 2 decimal places only on numeric columns
+
+    # Create a Plotly Table without hoverinfo
     fig = go.Figure(data=[go.Table(
         header=dict(
-            values=[f'<b>{col}</b>' for col in header_values],  # Column names
+            values=header_values,  # Column names with hover tooltips
             align='center',
             fill_color='lightskyblue',
             font=dict(color='black', size=12),
@@ -544,13 +548,8 @@ def main():
             fill_color='lightcyan',
             font=dict(color='black', size=11),
             line_color='darkslategray',
-            hoverinfo="header+text",  # Add hover for the data cells
         )
     )])
-
-    # Add tooltips to the header of the table using hovertext
-    for i, col in enumerate(header_values):
-        fig.data[0].header.hovertext = [tooltips[col] for col in header_values]
 
     # Display the interactive Plotly table in Streamlit
     st.plotly_chart(fig)
