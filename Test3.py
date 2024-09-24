@@ -504,40 +504,17 @@ def main():
 
     st.dataframe(overall_results[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'Expected Ave', 'Expected SR', 'True Ave', 'True SR']].round(2))
 
-    player_data = dismissed_data[dismissed_data['striker'] == player]
+    # Create an interactive pie chart using Plotly
+    fig = px.pie(player_data, names='wicket_type', values='Out',
+                 title=f'Dismissal Types for {player}',
+                 hole=0.3,  # Optional: creates a donut chart
+                 labels={'wicket_type': 'Wicket Type', 'Out': 'Number of Dismissals'})
 
-    # Categories (Wicket Types)
-    categories = player_data['wicket_type'].tolist()
-    num_categories = len(categories)
+    # Update pie chart to show percentages
+    fig.update_traces(textinfo='percent+label', hoverinfo='label+percent')
 
-    # Values for 'Out' corresponding to each wicket type
-    values = player_data['Out'].tolist()
-    values += values[:1]  # Close the loop for the radar chart
-
-    # Radar chart angles
-    angles = [n / float(num_categories) * 2 * pi for n in range(num_categories)]
-    angles += angles[:1]  # Close the loop for angles
-
-    # Radar chart setup
-    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
-
-    # Draw the outline of the radar chart
-    ax.set_theta_offset(pi / 2)
-    ax.set_theta_direction(-1)
-
-    # Draw one axis per category and add labels
-    plt.xticks(angles[:-1], categories)
-
-    # Draw the 'Out' value for each category
-    ax.plot(angles, values, linewidth=2, linestyle='solid', label=player)
-    ax.fill(angles, values, 'b', alpha=0.1)
-
-    # Title and legend
-    plt.title(f'Wicket Dismissals for {player}', size=15, color='#ffffff', y=1.1)
-    ax.legend(loc='upper right')
-
-    # Display in Streamlit
-    st.pyplot(fig)
+    # Display the chart in Streamlit
+    st.plotly_chart(fig)
 
 if __name__ == '__main__':
     main()
