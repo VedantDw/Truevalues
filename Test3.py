@@ -553,6 +553,9 @@ def main():
 
     # Display the interactive Plotly table in Streamlit
     st.plotly_chart(fig)
+
+    # Display the interactive Plotly table in Streamlit
+    st.plotly_chart(fig)
     # Filter data for the selected player
     player_data = dismissed_data
 
