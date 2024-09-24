@@ -515,7 +515,7 @@ def main():
     overall_results = overall_results.reset_index(drop=True)
 
     # Display the overall results without the index
-    st.dataframe(overall_results.round(2))
+    st.dataframe(overall_results)
 
 
 
