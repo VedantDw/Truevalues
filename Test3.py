@@ -505,8 +505,7 @@ def main():
     dismissed_data['Out'] = 1
     dismissed_data = dismissed_data.groupby(['striker','wicket_type'])[['Out']].sum().reset_index()
 
-    overall_results['Year'] = overall_results['Year'].astype(int)
-
+    overall_results['Year'] = pd.to_numeric(overall_results['Year'], errors='coerce').fillna(0).astype(int)
     # Step 3: Format all numeric columns to 2 decimal places
     overall_results = overall_results.applymap(lambda x: '{:.2f}'.format(x) if isinstance(x, (float, int)) else x)
 
