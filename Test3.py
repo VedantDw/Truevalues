@@ -521,9 +521,14 @@ def main():
     }
 
     # Create a Plotly Table with hover tooltips
+    cell_values = []
+    for col in overall_results.columns:
+        if pd.api.types.is_numeric_dtype(overall_results[col]):
+            cell_values.append(overall_results[col].apply(lambda x: f'{x:.2f}').tolist())
+        else:
+            cell_values.append(overall_results[col].tolist())
     header_values = list(overall_results.columns)
-    cell_values = [overall_results[col].apply(lambda x: f'{x:.2f}').tolist() for col in overall_results.columns]  # Force 2 decimal places
-
+    # Force 2 decimal places only on numeric columns
     fig = go.Figure(data=[go.Table(
         header=dict(
             values=[f'<b>{col}</b>' for col in header_values],  # Column names
