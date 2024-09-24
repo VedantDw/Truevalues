@@ -504,60 +504,18 @@ def main():
     dismissed_data = dismissed_data[dismissed_data['wicket_type'] != 'retired hurt']
     dismissed_data['Out'] = 1
     dismissed_data = dismissed_data.groupby(['striker','wicket_type'])[['Out']].sum().reset_index()
-    overall_results['Year'] = overall_results['Year'].round(0)
-    overall_results = (overall_results[['Year','Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'True Ave', 'True SR']])
-    st.dataframe(overall_results.round(2))
-    # # Custom HTML and CSS for hover text
-    # # Define column tooltips
-    # tooltips = {
-    #     'Year': 'Year of the match',
-    #     'Player': 'Name of the Player',
-    #     'Runs Scored': 'Total Runs Scored',
-    #     'BF': 'Balls Faced',
-    #     'Out': 'Times Player was Out',
-    #     'Ave': 'Batting Average: Runs per dismissal',
-    #     'SR': 'Strike Rate: Runs per 100 balls faced',
-    #     'True Ave': "True Average: True Avg is the difference in average between the batter's average and the expected average of a batter who has the same over distribution as them.",
-    #     'True SR': "True Strike Rate: True SR is the difference between the batter's SR and the expected SR of a batter who has the same over distribution as them"
-    # }
-    #
-    # # Create a Plotly Table with hover tooltips
-    # cell_values = []
-    # for col in overall_results.columns:
-    #     if pd.api.types.is_numeric_dtype(overall_results[col]):
-    #         cell_values.append(overall_results[col].apply(lambda x: f'{x:.2f}').tolist())
-    #     else:
-    #         cell_values.append(overall_results[col].tolist())
-    # overall_results['Year'] = overall_results['Year'].round(0)
-    # header_values = [
-    #     f'<span title="{tooltips[col]}">{col}</span>' for col in overall_results.columns
-    # ]    # Force 2 decimal places only on numeric columns
-    # # Force 2 decimal places only on numeric columns
-    #
-    # # Create a Plotly Table without hoverinfo
-    # fig = go.Figure(data=[go.Table(
-    #     header=dict(
-    #         values=header_values,  # Column names with hover tooltips
-    #         align='center',
-    #         fill_color='lightskyblue',
-    #         font=dict(color='black', size=12),
-    #         line_color='darkslategray'
-    #     ),
-    #     cells=dict(
-    #         values=cell_values,
-    #         align='center',
-    #         fill_color='lightcyan',
-    #         font=dict(color='black', size=11),
-    #         line_color='darkslategray',
-    #     )
-    # )])
-    #
-    # # Display the interactive Plotly table in Streamlit
-    # st.plotly_chart(fig)
-    #
-    # # Display the interactive Plotly table in Streamlit
-    # st.plotly_chart(fig)
-    # Filter data for the selected player
+    overall_results['Year'] = overall_results['Year'].astype(int)
+
+    # Step 3: Format all numeric columns to 2 decimal places
+    overall_results = overall_results.applymap(lambda x: '{:.2f}'.format(x) if isinstance(x, (float, int)) else x)
+
+    # Step 4: Select required columns and ensure `Year` is properly formatted as an integer
+    overall_results = overall_results[['Year', 'Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'True Ave', 'True SR']]
+
+    # Display the overall results without showing the index
+    st.dataframe(overall_results.round(2), index=False)
+
+
     player_data = dismissed_data
 
     # Convert 'Out' to percentage of the total dismissals for the player
