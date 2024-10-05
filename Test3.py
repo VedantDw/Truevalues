@@ -461,90 +461,90 @@ def main():
         'SA20': 'all_matches2.csv',
     }
 
-    selected_leagues = st.selectbox('Choose leagues:', list(league_files.keys()))
+    selected_leagues = st.sidebar.selectbox('Choose leagues:', list(league_files.keys()))
+    if selected_leagues:
+        data = load_data(league_files[selected_leagues])
+        # data = load_data('all_matches.csv')
+        years = data['year'].unique()
+        dates = data['Date'].unique()
 
-    data = load_data(league_files[selected_leagues])
-    # data = load_data('all_matches.csv')
-    years = data['year'].unique()
-    dates = data['Date'].unique()
+        # Select player on the top-left
+        players = data['striker'].unique()
+        player = st.sidebar.selectbox("Select Player:", players)
 
-    # Select player on the top-left
-    players = data['striker'].unique()
-    player = st.sidebar.selectbox("Select Player:", players)
+        # After player is chosen, show date selection
+        st.sidebar.subheader("Date Selection")
+        start_date = st.sidebar.date_input('Start Date', data['Date'].min())
+        end_date = st.sidebar.date_input('End Date', data['Date'].max())
 
-    # After player is chosen, show date selection
-    st.sidebar.subheader("Date Selection")
-    start_date = st.sidebar.date_input('Start Date', data['Date'].min())
-    end_date = st.sidebar.date_input('End Date', data['Date'].max())
+        # Filter data based on player selection and date range
+        player_data = data[data['striker'] == player]
+        filtered_data = data[(data['Date'] >= pd.to_datetime(start_date)) & (data['Date'] <= pd.to_datetime(end_date))]
+        start_over, end_over = st.sidebar.slider('Select Overs Range:', min_value=1, max_value=20, value=(1, 20))
+        filtered_data = filtered_data[(filtered_data['over'] >= start_over) & (filtered_data['over'] <= end_over)]
+        # Initialize a list to store year-by-year data
+        all_yearly_data = []
 
-    # Filter data based on player selection and date range
-    player_data = data[data['striker'] == player]
-    filtered_data = data[(data['Date'] >= pd.to_datetime(start_date)) & (data['Date'] <= pd.to_datetime(end_date))]
-    start_over, end_over = st.sidebar.slider('Select Overs Range:', min_value=1, max_value=20, value=(1, 20))
-    filtered_data = filtered_data[(filtered_data['over'] >= start_over) & (filtered_data['over'] <= end_over)]
-    # Initialize a list to store year-by-year data
-    all_yearly_data = []
+        # Year-by-Year Breakdown
+        for year in filtered_data['year'].unique():
+            year_data = filtered_data[filtered_data['year'] == year]
 
-    # Year-by-Year Breakdown
-    for year in filtered_data['year'].unique():
-        year_data = filtered_data[filtered_data['year'] == year]
+            # Apply `truemetrics` function directly on the yearly data
+            year_results = analyze_data_for_year3(year,filtered_data)
+            player_data = year_results[year_results['Player'] == player]
 
-        # Apply `truemetrics` function directly on the yearly data
-        year_results = analyze_data_for_year3(year,filtered_data)
-        player_data = year_results[year_results['Player'] == player]
-
-        # Append the year data for calculating overall stats later
-        all_yearly_data.append(player_data)
-
-
-
-    # Once year-by-year stats are handled, calculate overall stats by summing up the yearly results
-    st.subheader(f"Year Stats for {player}")
-
-    # Combine all yearly data into one DataFrame
-    combined_data = pd.concat(all_yearly_data, ignore_index=True)
-
-    # Apply `truemetrics` on the combined yearly data to calculate overall stats
-    overall_results = truemetrics(combined_data)
-    overall_results = overall_results.applymap(lambda x: '{:.2f}'.format(x) if isinstance(x, (float, int)) else x)
-
-    filtered_data = filtered_data[filtered_data['striker'] == player]
-    dismissed_data = filtered_data[filtered_data['player_dismissed'].notnull()]
-    dismissed_data = dismissed_data[dismissed_data['wicket_type'] != 'retired hurt']
-    dismissed_data['Out'] = 1
-    dismissed_data = dismissed_data.groupby(['striker','wicket_type'])[['Out']].sum().reset_index()
-
-    # Step 3: Format all numeric columns to 2 decimal places
-    overall_results = overall_results.applymap(lambda x: '{:.2f}'.format(x) if isinstance(x, (float, int)) else x)
-    overall_results['Year'] = pd.to_numeric(overall_results['Year'], errors='coerce').fillna(0).astype(int)
-    overall_results['Year'] = overall_results['Year'].astype(str)
-
-    # Step 4: Select required columns and ensure `Year` is properly formatted as an integer
-    overall_results = overall_results[['Year', 'Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'True Ave', 'True SR']]
-
-    overall_results = overall_results.reset_index(drop=True)
-
-    # Display the overall results without the index
-    st.dataframe(overall_results)
+            # Append the year data for calculating overall stats later
+            all_yearly_data.append(player_data)
 
 
 
-    player_data = dismissed_data
+        # Once year-by-year stats are handled, calculate overall stats by summing up the yearly results
+        st.subheader(f"Year Stats for {player}")
 
-    # Convert 'Out' to percentage of the total dismissals for the player
-    total_outs = player_data['Out'].sum()
-    player_data['Out_Percentage'] = (player_data['Out'] / total_outs * 100).map('{:.2f}'.format)
+        # Combine all yearly data into one DataFrame
+        combined_data = pd.concat(all_yearly_data, ignore_index=True)
 
-    # Create a bar chart using Plotly
-    fig = px.bar(player_data, x='wicket_type', y='Out', text='Out_Percentage',
-                 title=f'Dismissal Types for {player} (in %)',
-                 labels={'wicket_type': 'Wicket Type', 'Out': 'Number of Dismissals'})
+        # Apply `truemetrics` on the combined yearly data to calculate overall stats
+        overall_results = truemetrics(combined_data)
+        overall_results = overall_results.applymap(lambda x: '{:.2f}'.format(x) if isinstance(x, (float, int)) else x)
 
-    # Update hover text to show percentages with 2 decimal places
-    fig.update_traces(hovertemplate='%{x}: %{text}%<extra></extra>', textposition='auto')
+        filtered_data = filtered_data[filtered_data['striker'] == player]
+        dismissed_data = filtered_data[filtered_data['player_dismissed'].notnull()]
+        dismissed_data = dismissed_data[dismissed_data['wicket_type'] != 'retired hurt']
+        dismissed_data['Out'] = 1
+        dismissed_data = dismissed_data.groupby(['striker','wicket_type'])[['Out']].sum().reset_index()
 
-    # Display the bar chart in Streamlit
-    st.plotly_chart(fig)
+        # Step 3: Format all numeric columns to 2 decimal places
+        overall_results = overall_results.applymap(lambda x: '{:.2f}'.format(x) if isinstance(x, (float, int)) else x)
+        overall_results['Year'] = pd.to_numeric(overall_results['Year'], errors='coerce').fillna(0).astype(int)
+        overall_results['Year'] = overall_results['Year'].astype(str)
+
+        # Step 4: Select required columns and ensure `Year` is properly formatted as an integer
+        overall_results = overall_results[['Year', 'Player', 'Runs Scored', 'BF', 'Out', 'Ave', 'SR', 'True Ave', 'True SR']]
+
+        overall_results = overall_results.reset_index(drop=True)
+
+        # Display the overall results without the index
+        st.dataframe(overall_results)
+
+
+
+        player_data = dismissed_data
+
+        # Convert 'Out' to percentage of the total dismissals for the player
+        total_outs = player_data['Out'].sum()
+        player_data['Out_Percentage'] = (player_data['Out'] / total_outs * 100).map('{:.2f}'.format)
+
+        # Create a bar chart using Plotly
+        fig = px.bar(player_data, x='wicket_type', y='Out', text='Out_Percentage',
+                     title=f'Dismissal Types for {player} (in %)',
+                     labels={'wicket_type': 'Wicket Type', 'Out': 'Number of Dismissals'})
+
+        # Update hover text to show percentages with 2 decimal places
+        fig.update_traces(hovertemplate='%{x}: %{text}%<extra></extra>', textposition='auto')
+
+        # Display the bar chart in Streamlit
+        st.plotly_chart(fig)
 
 if __name__ == '__main__':
     main()
