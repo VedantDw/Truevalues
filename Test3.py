@@ -445,10 +445,10 @@ def main():
                         st.subheader(f'{i} not in this list')
                 combined_data = combined_data[combined_data['Player'].isin(temp)]
                 combined_data = combined_data.sort_values(by=['Runs Scored'], ascending=False)
-                st.dataframe(combined_data)
+                st.dataframe(combined_data.round(2))
             else:
                 combined_data = combined_data.sort_values(by=['Runs Scored'], ascending=False)
-                st.dataframe(combined_data)
+                st.dataframe(combined_data.round(2))
                 combined_data['Player2'] = combined_data['Player'] + ' , ' + combined_data['Year'].astype(str)
 
 
