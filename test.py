@@ -204,16 +204,6 @@ def main():
     # Load and concatenate data for all selected leagues
     league_files = {
         'IPL': 'all_matches.csv',
-        'PSL': 'PSL.csv',
-        'SA20': 'SA20.csv',
-        'T20I': 'T20I.csv',
-        'T20 WCs': 't20wcs.csv',
-        'WPL': 'WPL.csv',
-        'CPL': 'CPL.csv',
-        'LPL': 'LPL.csv',
-        'MLC': 'MLC.csv',
-        'SMAT': 'SMA.csv',
-        'The 100': 'The 100.csv',
     }
 
     selected_leagues = st.selectbox('Choose leagues:', list(league_files.keys()))
