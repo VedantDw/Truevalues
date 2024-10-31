@@ -334,7 +334,7 @@ def main():
 
     # Load and concatenate data for all selected leagues
     league_files = {
-        'IPL': 'all_matches.csv',
+        'IPL': 'ipl.csv',
     }
 
     selected_leagues = st.selectbox('Choose leagues:', list(league_files.keys()))
