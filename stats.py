@@ -30,13 +30,13 @@ def analyze_data_for_year3(data):
 
 
     # Group by Match_ID and Batter, then calculate the total runs and outs for each player in each match
-    df_match_totals2 = final_results4.groupby(['Start Date','Team','Host Country',]).agg(
+    df_match_totals2 = final_results4.groupby(['Start Date','Host Country',]).agg(
         Runs=('Runs', 'sum'),
         Outs=('Out', 'sum'),
         Balls=('BF', 'sum'),
     ).reset_index()
 
-    batting = pd.merge(df_match_totals, df_match_totals2, on=['Start Date','Team','Host Country',], suffixes=('', '_grouped'))
+    batting = pd.merge(df_match_totals, df_match_totals2, on=['Start Date','Host Country',], suffixes=('', '_grouped'))
 
     batting['run_diff'] = batting['Runs_grouped'] - batting['Runs']
     batting['out_diff'] = batting['Outs_grouped'] - batting['Outs']
