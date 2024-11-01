@@ -96,9 +96,10 @@ def main():
     # Create a select box
     choice = st.selectbox('Select your option:', options)
     choice2 = st.selectbox('Individual Player or Everyone:', ['Individual', 'Everyone'])
+    choice3 = st.multiselect('Home or Away:', ['Home', 'Away'])
+    choice4 = st.multiselect('Host Country:', data['Host Country'].unique())
 
-
-    # Filtering data based on the user's Date selection
+#    Filtering data based on the user's Date selection
     if start_date > end_date:
         st.error('Error: End Date must be greater than start Date.')
 
@@ -112,12 +113,17 @@ def main():
         players = filtered_data2['New Batter'].unique()
         player = st.multiselect("Select Players:", players)
         # name = st.selectbox('Choose the Player From the list', data['striker'].unique())
+    if choice3:
+        filtered_data2 = filtered_data2[filtered_data2['HomeorAway'].isin(choice3)].copy()
+    if choice4:
+        filtered_data2 = filtered_data2[filtered_data2['Host Country'].isin(choice4)].copy()
     inns = [1, 2,3,4]
     inn = st.multiselect("Select innings:", inns)
     if inn:
         filtered_data2 = filtered_data2[filtered_data2['Inns'].isin(inn)].copy()
     x = filtered_data2
     # A button to trigger the analysis
+
     if st.button('Analyse'):
         # Call a hypothetical function to analyze data
         print(filtered_data2.columns)
