@@ -122,7 +122,8 @@ def main():
         # Call a hypothetical function to analyze data
         print(filtered_data2.columns)
         results = analyze_data_for_year3(filtered_data2)
-
+        results = results[
+            (results['Runs'] >= start_runs) & (results['Runs'] <= end_runs)]
         if choice == 'Overall Stats':
             # Display the results
             if choice2 == 'Individual':
@@ -133,8 +134,12 @@ def main():
                     else:
                         st.subheader(f'{i} not in this list')
                 results = results[results['New Batter'].isin(temp)]
+                results = results.rename(columns={'New Batter': 'Batsman'})
+
                 st.dataframe(results.round(2))
             else:
+                results = results.rename(columns={'New Batter': 'Batsman'})
+
                 results = results.sort_values(by=['Runs'], ascending=False)
                 st.dataframe(results.round(2))
 
