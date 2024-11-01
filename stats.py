@@ -75,7 +75,8 @@ def load_data(filename):
 def main():
     st.title('Advanced Stats')
     data = load_data('entrypoints.csv')
-    years = data['year'].unique()
+
+    data['Start Date'] = pd.to_datetime(data['Start Date'], errors='coerce')
 
     start_date = st.date_input('Start date', data['Start Date'].min())
     end_date = st.date_input('End date', data['Start Date'].max())
