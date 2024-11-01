@@ -3,7 +3,7 @@ import math
 import pandas as pd
 import streamlit as st
 
-def analyze_data_for_year3(year, data):
+def analyze_data_for_year3(data):
 
     final_results4 = data[data['Wickets at Entry'] >= 0]
     # final_results4 = final_results4[final_results4['Wickets at Entry'] <= 4]
