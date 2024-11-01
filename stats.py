@@ -109,7 +109,7 @@ def main():
     filtered_data2['year'] = pd.to_datetime(filtered_data2['Start Date'], format='mixed').dt.year
 
     if choice2 == 'Individual':
-        players = data['New Batter'].unique()
+        players = filtered_data2['New Batter'].unique()
         player = st.multiselect("Select Players:", players)
         # name = st.selectbox('Choose the Player From the list', data['striker'].unique())
     inns = [1, 2,3,4]
