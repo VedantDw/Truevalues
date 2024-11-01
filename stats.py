@@ -8,7 +8,7 @@ def analyze_data_for_year3(data):
     final_results4 = data[data['Wickets at Entry'] >= 0]
     # final_results4 = final_results4[final_results4['Wickets at Entry'] <= 4]
     # final_results4 = final_results4[final_results4['New Batter'].isin(players)]
-
+    final_results4['I'] = 1
     final_results4 = final_results4[~final_results4['Team'].isin(['ICC'])]
 
     # Define the years of interest
