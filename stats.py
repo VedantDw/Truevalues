@@ -126,7 +126,7 @@ def main():
 
     if st.button('Analyse'):
         # Call a hypothetical function to analyze data
-        print(filtered_data2.columns)
+
         results = analyze_data_for_year3(filtered_data2)
         results = results[
             (results['Runs'] >= start_runs) & (results['Runs'] <= end_runs)]
