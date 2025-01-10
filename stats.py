@@ -105,7 +105,7 @@ def load_data(filename):
     return data
 
 def main():
-    st.title('Advanced Stats')
+    st.title('Match Factor')
     choice0 = st.selectbox('Batting Or Bowling:', ['Batting', 'Bowling'])
     if choice0 == 'Batting':
         data = load_data('entrypoints.csv')
