@@ -96,7 +96,7 @@ def main():
     # Create a select box
     choice = st.selectbox('Select your option:', options)
     choice2 = st.selectbox('Individual Player or Everyone:', ['Individual', 'Everyone'])
-    # choice3 = st.multiselect('Home or Away:', ['Home', 'Away'])
+    choice3 = st.multiselect('Home or Away:', ['Home', 'Away'])
     choice4 = st.multiselect('Host Country:', data['Host Country'].unique())
 
 #    Filtering data based on the user's Date selection
