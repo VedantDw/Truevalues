@@ -91,13 +91,6 @@ def bowlmatchfactor(bowling):
     return bowling2[['Bowler','BowlType','Team','Mat','Runs','Balls','Wickets','Ave','SR','BPM','Match Factor','SR Factor',]].round(2)
 
 
-# print(bowling2[bowling2['Wickets']>=150]['Bowler'].unique())
-# bowling.to_csv('toughwickets2.csv', index=False)
-# bowlmatchfactor(bowling,['Bowler','BowlType','Team',]).round(2).to_csv('overallbowlmatchfactor.csv', index=False)
-# bowlmatchfactor(bowling,['Bowler','BowlType','Team','Host Country']).round(2).to_csv('countrybowlmatchfactor.csv', index=False)
-# bowlmatchfactor(bowling,['Bowler','BowlType','Team','Ground','Host Country']).round(2).to_csv('groundbowlmatchfactor.csv', index=False)
-# bowlmatchfactor(bowling,['Bowler','BowlType','Team','year']).round(2).to_csv('yearbowlmatchfactor.csv', index=False)
-# bowlmatchfactor(bowling,['Bowler','BowlType','Team','AveWicket']).round(2).to_csv('comparisonbowlmatchfactor.csv', index=False)
 
 @st.cache_data
 def load_data(filename):
