@@ -130,7 +130,7 @@ def main():
         results = analyze_data_for_year3(filtered_data2)
         results = results[
             (results['Runs'] >= start_runs) & (results['Runs'] <= end_runs)]
-        if choice == 'Overall Stats':
+        if choice == 'Overall':
             # Display the results
             if choice2 == 'Individual':
                 temp = []
