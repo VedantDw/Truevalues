@@ -200,7 +200,7 @@ def main():
         # Create a select box
         choice = st.selectbox('Select your option:', options)
         choice2 = st.selectbox('Individual Player or Everyone:', ['Individual', 'Everyone'])
-        # choice3 = st.multiselect('Home or Away:', ['Home', 'Away'])
+        choice3 = st.multiselect('Pace or Spin:', ['Pace', 'Spin'])
         choice4 = st.multiselect('Host Country:', data['Host Country'].unique())
 
         #    Filtering data based on the user's Date selection
@@ -217,8 +217,8 @@ def main():
             players = filtered_data2['Bowler'].unique()
             player = st.multiselect("Select Players:", players)
             # name = st.selectbox('Choose the Player From the list', data['striker'].unique())
-        # if choice3:
-        #     filtered_data2 = filtered_data2[filtered_data2['HomeorAway'].isin(choice3)].copy()
+        if choice3:
+            filtered_data2 = filtered_data2[filtered_data2['BowlType'].isin(choice3)].copy()
         if choice4:
             filtered_data2 = filtered_data2[filtered_data2['Host Country'].isin(choice4)].copy()
         inns = [1, 2,3,4]
