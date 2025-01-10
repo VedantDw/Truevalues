@@ -3,7 +3,7 @@ import math
 import pandas as pd
 import streamlit as st
 
-def analyze_data_for_year3(data):
+def matchfactor(data):
 
     final_results4 = data[data['Wickets at Entry'] >= 0]
     final_results4 = data
@@ -68,6 +68,39 @@ def analyze_data_for_year3(data):
     # final_results5 = final_results5[final_results5['New Batter'].isin(names)]
     return final_results5[['New Batter','Team','Inns', 'Runs', 'Balls', 'Outs','ave','mean_ave','Match Factor',]].round(2)
 
+def bowlmatchfactor(bowling):
+    # bowling['Date'] = pd.to_datetime(bowling['Start Date'], format='mixed')
+    # comparison_date_str2 = '2021-12-25'  # Replace with your date string
+    # comparison_date2 = pd.to_datetime(comparison_date_str2)
+    # bowling = bowling[(bowling['Date'] >=comparison_date2)]
+    # Replace with your date string
+    bowling2 = bowling.groupby(['Bowler','BowlType','Team',]).agg(
+        Mat=('Matches', 'sum'),
+        Runs=('Runs', 'sum'),
+        Balls = ('Balls','sum'),
+        Wickets=('Wickets', 'sum'),
+        run_diff = ('run_diff','sum'),
+        ball_diff = ('ball_diff','sum'),
+        wickets_diff = ('wickets_diff','sum'),
+    ).reset_index()
+    # batting2 = batting2[batting2['New Batter'].isin(batters3000)]
+    bowling2['Ave'] = bowling2['Runs']/bowling2['Wickets']
+    bowling2['SR'] = bowling2['Balls']/bowling2['Wickets']
+    bowling2['BPM'] = bowling2['Balls']/bowling2['Mat']
+    bowling2['Mean Ave'] = bowling2['run_diff']/bowling2['wickets_diff']
+    bowling2['Mean SR'] = bowling2['ball_diff']/bowling2['wickets_diff']
+    bowling2['Match Factor'] = bowling2['Mean Ave']/bowling2['Ave']
+    bowling2['SR Factor'] = bowling2['Mean SR']/bowling2['SR']
+    return bowling2[['Bowler','BowlType','Team','Mat','Runs','Balls','Wickets','Ave','SR','BPM','Match Factor','SR Factor',]].round(2)
+
+
+# print(bowling2[bowling2['Wickets']>=150]['Bowler'].unique())
+# bowling.to_csv('toughwickets2.csv', index=False)
+# bowlmatchfactor(bowling,['Bowler','BowlType','Team',]).round(2).to_csv('overallbowlmatchfactor.csv', index=False)
+# bowlmatchfactor(bowling,['Bowler','BowlType','Team','Host Country']).round(2).to_csv('countrybowlmatchfactor.csv', index=False)
+# bowlmatchfactor(bowling,['Bowler','BowlType','Team','Ground','Host Country']).round(2).to_csv('groundbowlmatchfactor.csv', index=False)
+# bowlmatchfactor(bowling,['Bowler','BowlType','Team','year']).round(2).to_csv('yearbowlmatchfactor.csv', index=False)
+# bowlmatchfactor(bowling,['Bowler','BowlType','Team','AveWicket']).round(2).to_csv('comparisonbowlmatchfactor.csv', index=False)
 
 @st.cache_data
 def load_data(filename):
@@ -76,78 +109,152 @@ def load_data(filename):
 
 def main():
     st.title('Advanced Stats')
-    data = load_data('entrypoints.csv')
+    choice0 = st.selectbox('Batting Or Bowling:', ['Batting', 'Bowling'])
+    if choice0 == 'Batting':
+        data = load_data('entrypoints.csv')
 
-    data['Start Date'] = pd.to_datetime(data['Start Date'], errors='coerce')
+        data['Start Date'] = pd.to_datetime(data['Start Date'], errors='coerce')
 
-    start_date = st.date_input('Start date', data['Start Date'].min())
-    end_date = st.date_input('End date', data['Start Date'].max())
+        start_date = st.date_input('Start date', data['Start Date'].min())
+        end_date = st.date_input('End date', data['Start Date'].max())
 
-    # Filtering data based on the user's date selection
-    if start_date > end_date:
-        st.error('Error: End date must be greater than start date.')
+        # Filtering data based on the user's date selection
+        if start_date > end_date:
+            st.error('Error: End date must be greater than start date.')
 
-    data2 = data.groupby('New Batter')[['Runs']].sum().reset_index()
-    run = max((data2['Runs']).astype(int))
+        data2 = data.groupby('New Batter')[['Runs']].sum().reset_index()
+        run = max((data2['Runs']).astype(int))
 
-    # Selectors for user input
-    options = ['Overall',]
+        # Selectors for user input
+        options = ['Overall',]
 
-    # Create a select box
-    choice = st.selectbox('Select your option:', options)
-    choice2 = st.selectbox('Individual Player or Everyone:', ['Individual', 'Everyone'])
-    # choice3 = st.multiselect('Home or Away:', ['Home', 'Away'])
-    choice4 = st.multiselect('Host Country:', data['Host Country'].unique())
+        # Create a select box
+        choice = st.selectbox('Select your option:', options)
+        choice2 = st.selectbox('Individual Player or Everyone:', ['Individual', 'Everyone'])
+        # choice3 = st.multiselect('Home or Away:', ['Home', 'Away'])
+        choice4 = st.multiselect('Host Country:', data['Host Country'].unique())
 
-#    Filtering data based on the user's Date selection
-    if start_date > end_date:
-        st.error('Error: End Date must be greater than start Date.')
+    #    Filtering data based on the user's Date selection
+        if start_date > end_date:
+            st.error('Error: End Date must be greater than start Date.')
 
-    start_runs, end_runs = st.slider('Select Minimum Runs:', min_value=1, max_value=run, value=(1, run))
-    filtered_data = data
-    filtered_data2 = filtered_data[
-        (filtered_data['Start Date'] >= pd.to_datetime(start_date)) & (filtered_data['Start Date'] <= pd.to_datetime(end_date))]
-    filtered_data2['year'] = pd.to_datetime(filtered_data2['Start Date'], format='mixed').dt.year
+        start_runs, end_runs = st.slider('Select Minimum Runs:', min_value=1, max_value=run, value=(1, run))
+        filtered_data = data
+        filtered_data2 = filtered_data[
+            (filtered_data['Start Date'] >= pd.to_datetime(start_date)) & (filtered_data['Start Date'] <= pd.to_datetime(end_date))]
+        filtered_data2['year'] = pd.to_datetime(filtered_data2['Start Date'], format='mixed').dt.year
 
-    if choice2 == 'Individual':
-        players = filtered_data2['New Batter'].unique()
-        player = st.multiselect("Select Players:", players)
-        # name = st.selectbox('Choose the Player From the list', data['striker'].unique())
-    # if choice3:
-    #     filtered_data2 = filtered_data2[filtered_data2['HomeorAway'].isin(choice3)].copy()
-    if choice4:
-        filtered_data2 = filtered_data2[filtered_data2['Host Country'].isin(choice4)].copy()
-    inns = [1, 2,3,4]
-    inn = st.multiselect("Select innings:", inns)
-    if inn:
-        filtered_data2 = filtered_data2[filtered_data2['Inns'].isin(inn)].copy()
-    x = filtered_data2
-    # A button to trigger the analysis
+        if choice2 == 'Individual':
+            players = filtered_data2['New Batter'].unique()
+            player = st.multiselect("Select Players:", players)
+            # name = st.selectbox('Choose the Player From the list', data['striker'].unique())
+        # if choice3:
+        #     filtered_data2 = filtered_data2[filtered_data2['HomeorAway'].isin(choice3)].copy()
+        if choice4:
+            filtered_data2 = filtered_data2[filtered_data2['Host Country'].isin(choice4)].copy()
+        inns = [1, 2,3,4]
+        inn = st.multiselect("Select innings:", inns)
+        if inn:
+            filtered_data2 = filtered_data2[filtered_data2['Inns'].isin(inn)].copy()
+        x = filtered_data2
+        # A button to trigger the analysis
 
-    if st.button('Analyse'):
-        # Call a hypothetical function to analyze data
+        if st.button('Analyse'):
+            # Call a hypothetical function to analyze data
 
-        results = analyze_data_for_year3(filtered_data2)
-        results = results[
-            (results['Runs'] >= start_runs) & (results['Runs'] <= end_runs)]
-        if choice == 'Overall':
-            # Display the results
-            if choice2 == 'Individual':
-                temp = []
-                for i in player:
-                    if i in results['New Batter'].unique():
-                        temp.append(i)
-                    else:
-                        st.subheader(f'{i} not in this list')
-                results = results[results['New Batter'].isin(temp)]
-                results = results.rename(columns={'New Batter': 'Batsman'})
+            results = matchfactor(filtered_data2)
+            results = results[
+                (results['Runs'] >= start_runs) & (results['Runs'] <= end_runs)]
+            if choice == 'Overall':
+                # Display the results
+                if choice2 == 'Individual':
+                    temp = []
+                    for i in player:
+                        if i in results['New Batter'].unique():
+                            temp.append(i)
+                        else:
+                            st.subheader(f'{i} not in this list')
+                    results = results[results['New Batter'].isin(temp)]
+                    results = results.rename(columns={'New Batter': 'Batsman'})
 
-                st.dataframe(results.round(2))
-            else:
-                results = results.rename(columns={'New Batter': 'Batsman'})
+                    st.dataframe(results.round(2))
+                else:
+                    results = results.rename(columns={'New Batter': 'Batsman'})
 
-                results = results.sort_values(by=['Runs'], ascending=False)
-                st.dataframe(results.round(2))
+                    results = results.sort_values(by=['Runs'], ascending=False)
+                    st.dataframe(results.round(2))
+    else:
+        data = load_data('toughwickets2.csv')
+        data['Start Date'] = pd.to_datetime(data['Start Date'], errors='coerce')
+
+        start_date = st.date_input('Start date', data['Start Date'].min())
+        end_date = st.date_input('End date', data['Start Date'].max())
+
+        # Filtering data based on the user's date selection
+        if start_date > end_date:
+            st.error('Error: End date must be greater than start date.')
+
+        data2 = data.groupby('Bowler')[['Wickets']].sum().reset_index()
+        run = max((data2['Wickets']).astype(int))
+
+        # Selectors for user input
+        options = ['Overall',]
+
+        # Create a select box
+        choice = st.selectbox('Select your option:', options)
+        choice2 = st.selectbox('Individual Player or Everyone:', ['Individual', 'Everyone'])
+        # choice3 = st.multiselect('Home or Away:', ['Home', 'Away'])
+        choice4 = st.multiselect('Host Country:', data['Host Country'].unique())
+
+        #    Filtering data based on the user's Date selection
+        if start_date > end_date:
+            st.error('Error: End Date must be greater than start Date.')
+
+        start_runs, end_runs = st.slider('Select Minimum Wickets:', min_value=1, max_value=run, value=(1, run))
+        filtered_data = data
+        filtered_data2 = filtered_data[
+            (filtered_data['Start Date'] >= pd.to_datetime(start_date)) & (filtered_data['Start Date'] <= pd.to_datetime(end_date))]
+        filtered_data2['year'] = pd.to_datetime(filtered_data2['Start Date'], format='mixed').dt.year
+
+        if choice2 == 'Individual':
+            players = filtered_data2['Bowler'].unique()
+            player = st.multiselect("Select Players:", players)
+            # name = st.selectbox('Choose the Player From the list', data['striker'].unique())
+        # if choice3:
+        #     filtered_data2 = filtered_data2[filtered_data2['HomeorAway'].isin(choice3)].copy()
+        if choice4:
+            filtered_data2 = filtered_data2[filtered_data2['Host Country'].isin(choice4)].copy()
+        inns = [1, 2,3,4]
+        inn = st.multiselect("Select innings:", inns)
+        if inn:
+            filtered_data2 = filtered_data2[filtered_data2['Inn'].isin(inn)].copy()
+        x = filtered_data2
+        # A button to trigger the analysis
+
+        if st.button('Analyse'):
+            # Call a hypothetical function to analyze data
+
+            results = bowlmatchfactor(filtered_data2)
+            results = results[
+                (results['Wickets'] >= start_runs) & (results['Wickets'] <= end_runs)]
+            if choice == 'Overall':
+                # Display the results
+                if choice2 == 'Individual':
+                    temp = []
+                    for i in player:
+                        if i in results['Bowler'].unique():
+                            temp.append(i)
+                        else:
+                            st.subheader(f'{i} not in this list')
+                    results = results[results['Bowler'].isin(temp)]
+                    results = results.rename(columns={'Bowler': 'Bowler'})
+
+                    st.dataframe(results.round(2))
+                else:
+                    results = results.rename(columns={'Bowler': 'Bowler'})
+
+                    results = results.sort_values(by=['Wickets'], ascending=False)
+                    st.dataframe(results.round(2))
 
 
 
