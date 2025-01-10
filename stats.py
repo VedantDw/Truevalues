@@ -69,12 +69,8 @@ def matchfactor(data):
     return final_results5[['New Batter','Team','Inns', 'Runs', 'Balls', 'Outs','ave','mean_ave','Match Factor',]].round(2)
 
 def bowlmatchfactor(bowling):
-    # bowling['Date'] = pd.to_datetime(bowling['Start Date'], format='mixed')
-    # comparison_date_str2 = '2021-12-25'  # Replace with your date string
-    # comparison_date2 = pd.to_datetime(comparison_date_str2)
-    # bowling = bowling[(bowling['Date'] >=comparison_date2)]
-    # Replace with your date string
-    bowling2 = bowling.groupby(['Bowler','BowlType','Team',]).agg(
+
+    bowling2 = bowling.groupby(['Bowler','BowlType',]).agg(
         Mat=('Matches', 'sum'),
         Runs=('Runs', 'sum'),
         Balls = ('Balls','sum'),
@@ -83,7 +79,8 @@ def bowlmatchfactor(bowling):
         ball_diff = ('ball_diff','sum'),
         wickets_diff = ('wickets_diff','sum'),
     ).reset_index()
-    # batting2 = batting2[batting2['New Batter'].isin(batters3000)]
+    most_frequent_team = bowling.groupby(['Bowler','BowlType'])['Team'].agg(lambda x: x.mode().iat[0]).reset_index()
+    bowling2 = pd.merge(bowling2, most_frequent_team, on=['Bowler','BowlType'], suffixes=('', '_grouped'))
     bowling2['Ave'] = bowling2['Runs']/bowling2['Wickets']
     bowling2['SR'] = bowling2['Balls']/bowling2['Wickets']
     bowling2['BPM'] = bowling2['Balls']/bowling2['Mat']
