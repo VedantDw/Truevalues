@@ -142,8 +142,8 @@ def main():
         #     filtered_data2 = filtered_data2[filtered_data2['HomeorAway'].isin(choice3)].copy()
         if choice4:
             filtered_data2 = filtered_data2[filtered_data2['Host Country'].isin(choice4)].copy()
-        if choice5:
-            filtered_data2 = filtered_data2[filtered_data2['Team'].isin(choice5)].copy()
+        # if choice5:
+        #     filtered_data2 = filtered_data2[filtered_data2['Team'].isin(choice5)].copy()
         inns = [1, 2,3,4]
         inn = st.multiselect("Select innings:", inns)
         if inn:
@@ -197,7 +197,7 @@ def main():
         choice2 = st.selectbox('Individual Player or Everyone:', ['Individual', 'Everyone'])
         choice3 = st.multiselect('Pace or Spin:', ['Pace', 'Spin'])
         choice4 = st.multiselect('Host Country:', data['Host Country'].unique())
-        choice5 = st.multiselect('Team:', data['Team'].unique())
+        # choice5 = st.multiselect('Team:', data['Team'].unique())
     #    Filtering data based on the user's Date selection
         if start_date > end_date:
             st.error('Error: End Date must be greater than start Date.')
@@ -216,8 +216,8 @@ def main():
             filtered_data2 = filtered_data2[filtered_data2['BowlType'].isin(choice3)].copy()
         if choice4:
             filtered_data2 = filtered_data2[filtered_data2['Host Country'].isin(choice4)].copy()
-        if choice5:
-            filtered_data2 = filtered_data2[filtered_data2['Team'].isin(choice5)].copy()
+        # if choice5:
+        #     filtered_data2 = filtered_data2[filtered_data2['Team'].isin(choice5)].copy()
         inns = [1, 2,3,4]
         inn = st.multiselect("Select innings:", inns)
         if inn:
