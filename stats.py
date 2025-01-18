@@ -123,7 +123,7 @@ def main():
         choice2 = st.selectbox('Individual Player or Everyone:', ['Individual', 'Everyone'])
         # choice3 = st.multiselect('Home or Away:', ['Home', 'Away'])
         choice4 = st.multiselect('Host Country:', data['Host Country'].unique())
-        choice5 = st.multiselect('Team:', data['Team'].unique())
+        # choice5 = st.multiselect('Team:', data['Team'].unique())
     #    Filtering data based on the user's Date selection
         if start_date > end_date:
             st.error('Error: End Date must be greater than start Date.')
