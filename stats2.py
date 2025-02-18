@@ -31,7 +31,7 @@ def main():
     start_runs, end_runs = st.slider('Select Minimum Runs:', min_value=1, max_value=18426, value=(1, 18426))
 
     if choice2 == 'Individual':
-        players = data['New Batter'].unique()
+        players = data['Batter'].unique()
         player = st.multiselect("Select Players:", players)
         # name = st.selectbox('Choose the Player From the list', data['striker'].unique())
 
