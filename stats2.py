@@ -36,7 +36,6 @@ def main():
         # name = st.selectbox('Choose the Player From the list', data['striker'].unique())
 
     # A button to trigger the analysis
-
     if st.button('Analyse'):
         # Call a hypothetical function to analyze data
 
@@ -53,12 +52,12 @@ def main():
             results = results[results['Batter'].isin(temp)]
             results = results.rename(columns={'Batter': 'Batsman'})
 
-            st.dataframe(results.round(2))
+            st.dataframe(results[['Batsman','Inns', 'Runs', 'Balls', 'Outs','Fifties','Centuries','Ave','SR', 'Adjusted Ave','Adjusted Sr']].round(2))
         else:
             results = results.rename(columns={'Batter': 'Batsman'})
 
             results = results.sort_values(by=['Runs'], ascending=False)
-            st.dataframe(results.round(2))
+            st.dataframe(results[['Batsman','Inns', 'Runs', 'Balls', 'Outs','Fifties','Centuries','Ave','SR', 'Adjusted Ave','Adjusted Sr']].round(2))
 
 
 
