@@ -151,7 +151,6 @@ def main():
         player = st.multiselect("Select Players:", players)
         # name = st.selectbox('Choose the Player From the list', data['striker'].unique())
 
-    x = data
     # A button to trigger the analysis
 
     if st.button('Analyse'):
