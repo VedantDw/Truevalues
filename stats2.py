@@ -129,8 +129,8 @@ def main():
 
     data = load_data('odientrypoints.csv')
 
-    data2 = data.groupby('New Batter')[['Runs']].sum().reset_index()
-    run = max((data2['Runs']).astype(int))
+    # data2 = data.groupby('New Batter')[['Runs']].sum().reset_index()
+    # run = max((data2['Runs']).astype(int))
 
     # Selectors for user input
     options = ['Overall',]
@@ -142,7 +142,7 @@ def main():
     #    Filtering data based on the user's Date selection
 
 
-    start_runs, end_runs = st.slider('Select Minimum Runs:', min_value=1, max_value=run, value=(1, run))
+    start_runs, end_runs = st.slider('Select Minimum Runs:', min_value=1, max_value=18426, value=(1, 18426))
 
     data['year'] = pd.to_datetime(data['Start Date'], format='mixed').dt.year
 
