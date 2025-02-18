@@ -143,22 +143,21 @@ def main():
 
 
     start_runs, end_runs = st.slider('Select Minimum Runs:', min_value=1, max_value=run, value=(1, run))
-    filtered_data2 = data
 
-    filtered_data2['year'] = pd.to_datetime(filtered_data2['Start Date'], format='mixed').dt.year
+    data['year'] = pd.to_datetime(data['Start Date'], format='mixed').dt.year
 
     if choice2 == 'Individual':
-        players = filtered_data2['New Batter'].unique()
+        players = data['New Batter'].unique()
         player = st.multiselect("Select Players:", players)
         # name = st.selectbox('Choose the Player From the list', data['striker'].unique())
 
-    x = filtered_data2
+    x = data
     # A button to trigger the analysis
 
     if st.button('Analyse'):
         # Call a hypothetical function to analyze data
 
-        results = adjustedstats(filtered_data2)
+        results = adjustedstats(data)
         results = results[
             (results['Runs'] >= start_runs) & (results['Runs'] <= end_runs)]
 
