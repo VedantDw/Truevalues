@@ -114,7 +114,7 @@ def adjustedstats(data):
 
     final_results5 = final_results5.rename(columns={'New Batter':'Batter'})
     # final_results5 = final_results5[final_results5['New Batter'].isin(names)]
-    return final_results5[['Batter','Team','Inns', 'Runs', 'Balls', 'Outs','Fifties','Centuries','Ave','SR', 'Adjusted Ave','Adjusted Sr']].round(2)
+    return final_results5[['Batter','Inns', 'Runs', 'Balls', 'Outs','Fifties','Centuries','Ave','SR', 'Adjusted Ave','Adjusted Sr']].round(2)
 
 
 
