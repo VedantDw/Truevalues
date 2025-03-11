@@ -83,6 +83,7 @@ def bowladjstats(df):
     bowling3 = bowling3.drop(columns = ['matches_diff','run_diff','ball_diff','wickets_diff','Mean Ave','Mean Econ','Mean SR','PresentMatches','PresentRuns','PresentBalls','PresentWickets','PresentAve','PresentSR','PresentEcon',])
     return bowling3
 
+
 def main():
     st.title('Adjusted ODI Stats')
     choice0 = st.selectbox('Batting Or Bowling:', ['Batting', 'Bowling'])
