@@ -145,6 +145,7 @@ def main():
         filtered_data2 = data[
             (data['Start Date'] >= pd.to_datetime(start_date)) & (data['Start Date'] <= pd.to_datetime(end_date))]
 
+
         choice2 = st.multiselect('Pace or Spin:', ['Pace', 'Spin'])
         filtered_data2 = data[
             (filtered_data2['Start Date'] >= pd.to_datetime(start_date)) & (filtered_data2['Start Date'] <= pd.to_datetime(end_date))]
