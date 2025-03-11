@@ -12,7 +12,7 @@ def load_data(filename):
 
 def bowladjstats(df,start_date,end_date):
     filtered_data2 = df[(df['year'] >= start_date) & (df['year'] <= end_date)]
-    df_match_totals = df.groupby(['Bowler','BowlType','year']).agg(
+    df_match_totals = filtered_data2.groupby(['Bowler','BowlType','year']).agg(
         Matches = ('Matches','sum'),
         Inn=('I', 'sum'),
         Runs=('Runs', 'sum'),
@@ -20,7 +20,7 @@ def bowladjstats(df,start_date,end_date):
         Wickets=('Wkts', 'sum'),
     ).reset_index()
 
-    df_match_totals2 = df.groupby(['BowlType','year']).agg(
+    df_match_totals2 = filtered_data2.groupby(['BowlType','year']).agg(
         Matches = ('Matches','sum'),
         Runs=('Runs', 'sum'),
         Balls = ('Balls','sum'),
