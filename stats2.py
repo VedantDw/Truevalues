@@ -143,7 +143,7 @@ def main():
         # if start_date > end_date:
         #     st.error('Error: End date must be greater than start date.')
         data['year'] = pd.to_datetime(data['Start Date'], format='mixed').dt.year
-        start_date,end_date = st.slider('Select Year:', min_value=1971, max_value=2025, value=(1, 2025))
+        start_date,end_date = st.slider('Select Year:', min_value=1971, max_value=2025, value=(1971, 2025))
 
         filtered_data2 = data[
             (data['year'] >= start_date) & (data['year'] <= end_date)]
