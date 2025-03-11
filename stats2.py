@@ -136,28 +136,28 @@ def main():
         data = load_data('odibowlinnsbyinnslist2.csv')
         # Create a select box
         data['Start Date'] = pd.to_datetime(data['Start Date'], errors='coerce')
-        # start_date = st.date_input('Start date', data['Start Date'].min())
-        # end_date = st.date_input('End date', data['Start Date'].max())
+        start_date = st.date_input('Start date', data['Start Date'].min())
+        end_date = st.date_input('End date', data['Start Date'].max())
         #
         # # Filtering data based on the user's date selection
-        # if start_date > end_date:
-        #     st.error('Error: End date must be greater than start date.')
+        if start_date > end_date:
+            st.error('Error: End date must be greater than start date.')
         data['year'] = pd.to_datetime(data['Start Date'], format='mixed').dt.year
-        start_date,end_date = st.slider('Select Year:', min_value=1971, max_value=2025, value=(1971, 2025))
+        # start_date,end_date = st.slider('Select Year:', min_value=1971, max_value=2025, value=(1971, 2025))
 
-        filtered_data2 = data[(data['year'] >= start_date) & (data['year'] <= end_date)]
-        # filtered_data2 = data[
-        #     (filtered_data2['Start Date'] >= pd.to_datetime(start_date)) & (filtered_data2['Start Date'] <= pd.to_datetime(end_date))]
+        # filtered_data2 = data[(data['year'] >= start_date) & (data['year'] <= end_date)]
+        filtered_data2 = data[
+            (data['Start Date'] >= pd.to_datetime(start_date)) & (data['Start Date'] <= pd.to_datetime(end_date))]
 
 
         choice2 = st.multiselect('Pace or Spin:', ['Pace', 'Spin'])
         choice3 = st.selectbox('Individual Player or Everyone:', ['Individual', 'Everyone'])
-        start_wickets, end_wickets = st.slider('Select Minimum Wickets:', min_value=1, max_value=535, value=(1, 535))
         if choice2:
             filtered_data2 = filtered_data2[filtered_data2['BowlType'].isin(choice2)]
         if choice3 == 'Individual':
             players = filtered_data2['Bowler'].unique()
             player = st.multiselect("Select Players:", players)
+        start_wickets, end_wickets = st.slider('Select Minimum Wickets:', min_value=1, max_value=535, value=(1, 535))
         if st.button('Analyse'):
             # Call a hypothetical function to analyze data
 
