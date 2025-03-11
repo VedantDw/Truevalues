@@ -10,7 +10,6 @@ def load_data(filename):
     data = pd.read_csv(filename, low_memory=False)
     return data
 
-@st.cache_data
 def bowladjstats(df):
     df_match_totals = df.groupby(['Bowler','BowlType','year']).agg(
         Matches = ('Matches','sum'),
