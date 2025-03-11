@@ -137,14 +137,17 @@ def main():
         data = load_data('odibowlinnsbyinnslist2.csv')
         # Create a select box
         data['Start Date'] = pd.to_datetime(data['Start Date'], errors='coerce')
-        start_date = st.date_input('Start date', data['Start Date'].min())
-        end_date = st.date_input('End date', data['Start Date'].max())
+        # start_date = st.date_input('Start date', data['Start Date'].min())
+        # end_date = st.date_input('End date', data['Start Date'].max())
+        #
+        # # Filtering data based on the user's date selection
+        # if start_date > end_date:
+        #     st.error('Error: End date must be greater than start date.')
+        data['year'] = pd.to_datetime(data['Start Date'], format='mixed').dt.year
+        start_date,end_date = st.slider('Select Year:', min_value=1971, max_value=2025, value=(1, 2025))
 
-        # Filtering data based on the user's date selection
-        if start_date > end_date:
-            st.error('Error: End date must be greater than start date.')
         filtered_data2 = data[
-            (data['Start Date'] >= pd.to_datetime(start_date)) & (data['Start Date'] <= pd.to_datetime(end_date))]
+            (data['year'] >= start_date) & (data['year'] <= end_date)]
 
 
         choice2 = st.multiselect('Pace or Spin:', ['Pace', 'Spin'])
