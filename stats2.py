@@ -146,11 +146,11 @@ def main():
         start_date,end_date = st.slider('Select Year:', min_value=1971, max_value=2025, value=(1971, 2025))
 
         filtered_data2 = data[(data['year'] >= start_date) & (data['year'] <= end_date)]
+        # filtered_data2 = data[
+        #     (filtered_data2['Start Date'] >= pd.to_datetime(start_date)) & (filtered_data2['Start Date'] <= pd.to_datetime(end_date))]
 
 
         choice2 = st.multiselect('Pace or Spin:', ['Pace', 'Spin'])
-        filtered_data2 = data[
-            (filtered_data2['Start Date'] >= pd.to_datetime(start_date)) & (filtered_data2['Start Date'] <= pd.to_datetime(end_date))]
         choice3 = st.selectbox('Individual Player or Everyone:', ['Individual', 'Everyone'])
         start_wickets, end_wickets = st.slider('Select Minimum Wickets:', min_value=1, max_value=535, value=(1, 535))
         if choice2:
