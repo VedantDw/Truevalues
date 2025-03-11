@@ -10,7 +10,8 @@ def load_data(filename):
     data = pd.read_csv(filename, low_memory=False)
     return data
 
-def bowladjstats(df):
+def bowladjstats(df,start_date,end_date):
+    filtered_data2 = df[(df['year'] >= start_date) & (df['year'] <= end_date)]
     df_match_totals = df.groupby(['Bowler','BowlType','year']).agg(
         Matches = ('Matches','sum'),
         Inn=('I', 'sum'),
@@ -133,9 +134,9 @@ def main():
                 results = results.sort_values(by=['Runs'], ascending=False)
                 st.dataframe(results[['Batsman','Inns', 'Runs', 'Balls', 'Outs','Fifties','Centuries','Ave','SR', 'Adjusted Ave','Adjusted Sr']].round(2))
     else:
-        data = load_data('odibowlinnsbyinnslist2.csv')
+        filtered_data2 = load_data('odibowlinnsbyinnslist2.csv')
         # Create a select box
-        data['Start Date'] = pd.to_datetime(data['Start Date'], errors='coerce')
+        filtered_data2['Start Date'] = pd.to_datetime(filtered_data2['Start Date'], errors='coerce')
         # start_date = st.date_input('Start date', data['Start Date'].min())
         # end_date = st.date_input('End date', data['Start Date'].max())
         # #
@@ -147,8 +148,8 @@ def main():
         #     (data['Start Date'] >= pd.to_datetime(start_date)) & (data['Start Date'] <= pd.to_datetime(end_date))]
         #
         start_date,end_date = st.slider('Select Year:', min_value=1971, max_value=2025, value=(1971, 2025))
-        data['year'] = pd.to_datetime(data['Start Date'], format='mixed').dt.year
-        filtered_data2 = data[(data['year'] >= start_date) & (data['year'] <= end_date)]
+        filtered_data2['year'] = pd.to_datetime(filtered_data2['Start Date'], format='mixed').dt.year
+
         #
         choice2 = st.multiselect('Pace or Spin:', ['Pace', 'Spin'])
         choice3 = st.selectbox('Individual Player or Everyone:', ['Individual', 'Everyone'])
@@ -161,7 +162,7 @@ def main():
         if st.button('Analyse'):
             # Call a hypothetical function to analyze data
 
-            results = bowladjstats(filtered_data2)
+            results = bowladjstats(filtered_data2,start_date,end_date)
             results = results[
                 (results['Wickets'] >= start_wickets) & (results['Wickets'] <= end_wickets)]
 
